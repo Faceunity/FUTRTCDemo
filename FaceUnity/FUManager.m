@@ -30,7 +30,7 @@ static FUManager *shareManager = NULL;
     dispatch_once(&onceToken, ^{
         shareManager = [[FUManager alloc] init];
     });
-    
+
     return shareManager;
 }
 
@@ -46,11 +46,24 @@ static FUManager *shareManager = NULL;
         
         [self setDefaultParameters];
         
+        /* 加载AI模型 */
+        [self loadAIModle];
+        
         NSLog(@"faceunitySDK version:%@",[FURenderer getVersion]);
     }
     
     return self;
 }
+
+-(void)loadAIModle{
+    /* 单独使用美颜场景，只需加载 ai_facelandmarks75,注：美颜和贴纸都用场景用 ai_face_processor*/
+//    NSData *ai_facelandmarks75 = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ai_facelandmarks75.bundle" ofType:nil]];
+//    [FURenderer loadAIModelFromPackage:(void *)ai_facelandmarks75.bytes size:(int)ai_facelandmarks75.length aitype:FUAITYPE_FACELANDMARKS75];
+    
+    NSData *ai_face_processor = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ai_face_processor.bundle" ofType:nil]];
+    [FURenderer loadAIModelFromPackage:(void *)ai_face_processor.bytes size:(int)ai_face_processor.length aitype:FUAITYPE_FACEPROCESSOR];
+}
+
 
 /*设置默认参数*/
 - (void)setDefaultParameters {
@@ -67,7 +80,7 @@ static FUManager *shareManager = NULL;
     self.selectedFilterLevel    = 0.5 ;
     
     self.skinDetectEnable       = YES ;
-    self.blurShape              = 0 ;
+    self.blurShape              = 1 ;
     self.blurLevel              = 0.7 ;
     self.whiteLevel             = 0.5 ;
     self.redLevel               = 0.5 ;
@@ -183,15 +196,16 @@ static FUManager *shareManager = NULL;
 }
 
 /**加载美颜道具*/
+/**加载美颜道具*/
 - (void)loadFilter
 {
     NSString *path = [[NSBundle mainBundle] pathForResource:@"face_beautification.bundle" ofType:nil];
 
     items[0] = [FURenderer itemWithContentsOfFile:path];
     
-    NSLog(@"---- load filter ~");
+    /* 点位共存模式*/
+    [FURenderer itemSetParam:items[0] withName:@"landmarks_type" value:@(FUAITYPE_FACEPROCESSOR)];
 }
-
 /**设置美颜参数*/
 - (void)setBeautyParams {
     
@@ -216,58 +230,26 @@ static FUManager *shareManager = NULL;
     [FURenderer itemSetParam:items[0] withName:@"filter_level" value:@(self.selectedFilterLevel)]; //滤镜程度
 }
 
+#pragma mark -  render
 /**将道具绘制到pixelBuffer*/
-
 - (CVPixelBufferRef)renderItemsToPixelBuffer:(CVPixelBufferRef)pixelBuffer{
-    // 在未识别到人脸时根据重力方向设置人脸检测方向
-    /**设置美颜参数*/
+    
     [self setBeautyParams];
-    /*Faceunity核心接口，将道具及美颜效果绘制到pixelBuffer中，执行完此函数后pixelBuffer即包含美颜及贴纸效果*/
+   
     CVPixelBufferRef buffer = [[FURenderer shareRenderer] renderPixelBuffer:pixelBuffer withFrameId:frameID items:items itemCount:sizeof(items)/sizeof(int) flipx:YES];//flipx 参数设为YES可以使道具做水平方向的镜像翻转
     frameID += 1;
     
     return buffer;
 }
 
-- (int)renderItemWithTexture:(int)texture Width:(int)width Height:(int)height {
+/**处理YUV*/
+- (void)processFrameWithY:(void*)y U:(void*)u V:(void*)v yStride:(int)ystride uStride:(int)ustride vStride:(int)vstride FrameWidth:(int)width FrameHeight:(int)height {
     
+    /**设置美颜参数*/
     [self setBeautyParams];
-    [self prepareToRender];
     
-    if(self.flipx){
-       fuRenderItemsEx2(FU_FORMAT_RGBA_TEXTURE,&texture, FU_FORMAT_RGBA_TEXTURE, &texture, width, height, frameID, items, sizeof(items)/sizeof(int), NAMA_RENDER_OPTION_FLIP_X | NAMA_RENDER_FEATURE_FULL, NULL);
-    }else{
-       fuRenderItemsEx(FU_FORMAT_RGBA_TEXTURE, &texture, FU_FORMAT_RGBA_TEXTURE, &texture, width, height, frameID, items, sizeof(items)/sizeof(int)) ;
-    }
-
-    [self renderFlush];
-    
+    [[FURenderer shareRenderer] renderFrame:y u:u  v:v  ystride:ystride ustride:ustride vstride:vstride width:width height:height frameId:frameID items:items itemCount:sizeof(items)/sizeof(int)];
     frameID ++ ;
-    
-    return texture;
-}
-
-// 此方法用于提高 FaceUnity SDK 和 腾讯 SDK 的兼容性
- static int enabled[10];
-- (void)prepareToRender {
-    for (int i = 0; i<10; i++) {
-        glGetVertexAttribiv(i,GL_VERTEX_ATTRIB_ARRAY_ENABLED,&enabled[i]);
-    }
-}
-
-// 此方法用于提高 FaceUnity SDK 和 腾讯 SDK 的兼容性
-- (void)renderFlush {
-    glFlush();
-    
-    for (int i = 0; i<10; i++) {
-        
-        if(enabled[i]){
-            glEnableVertexAttribArray(i);
-        }
-        else{
-            glDisableVertexAttribArray(i);
-        }
-    }
 }
 
 /**获取图像中人脸中心点*/
