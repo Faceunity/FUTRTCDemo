@@ -66,7 +66,7 @@
 - (CVPixelBufferRef)renderItemsToPixelBuffer:(CVPixelBufferRef)pixelBuffer;
 
 - (int)renderItemWithTexture:(int)texture Width:(int)width Height:(int)height ;
-
+- (void)processFrameWithY:(void*)y U:(void*)u V:(void*)v yStride:(int)ystride uStride:(int)ustride vStride:(int)vstride FrameWidth:(int)width FrameHeight:(int)height;
 /**获取75个人脸特征点*/
 - (void)getLandmarks:(float *)landmarks;
 
