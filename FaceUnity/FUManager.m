@@ -203,8 +203,6 @@ static FUManager *shareManager = NULL;
 
     items[0] = [FURenderer itemWithContentsOfFile:path];
     
-    /* 点位共存模式*/
-    [FURenderer itemSetParam:items[0] withName:@"landmarks_type" value:@(FUAITYPE_FACEPROCESSOR)];
 }
 /**设置美颜参数*/
 - (void)setBeautyParams {
@@ -251,6 +249,52 @@ static FUManager *shareManager = NULL;
     [[FURenderer shareRenderer] renderFrame:y u:u  v:v  ystride:ystride ustride:ustride vstride:vstride width:width height:height frameId:frameID items:items itemCount:sizeof(items)/sizeof(int)];
     frameID ++ ;
 }
+
+/**将道具绘制到pixelBuffer*/
+
+- (int)renderItemWithTexture:(int)texture Width:(int)width Height:(int)height {
+    
+    [self setBeautyParams];
+    [self prepareToRender];
+    
+    GLint aa =  glGetError();
+    
+    if(self.flipx){
+       fuRenderItemsEx2(FU_FORMAT_RGBA_TEXTURE,&texture, FU_FORMAT_RGBA_TEXTURE, &texture, width, height, frameID, items, sizeof(items)/sizeof(int), NAMA_RENDER_OPTION_FLIP_X | NAMA_RENDER_FEATURE_FULL, NULL);
+    }else{
+       fuRenderItemsEx(FU_FORMAT_RGBA_TEXTURE, &texture, FU_FORMAT_RGBA_TEXTURE, &texture, width, height, frameID, items, sizeof(items)/sizeof(int)) ;
+    }
+
+    [self renderFlush];
+    
+    frameID ++ ;
+    
+    return texture;
+}
+
+// 此方法用于提高 FaceUnity SDK 和 腾讯 SDK 的兼容性
+ static int enabled[10];
+- (void)prepareToRender {
+    for (int i = 0; i<10; i++) {
+        glGetVertexAttribiv(i,GL_VERTEX_ATTRIB_ARRAY_ENABLED,&enabled[i]);
+    }
+}
+
+// 此方法用于提高 FaceUnity SDK 和 腾讯 SDK 的兼容性
+- (void)renderFlush {
+    glFlush();
+    
+    for (int i = 0; i<10; i++) {
+        
+        if(enabled[i]){
+            glEnableVertexAttribArray(i);
+        }
+        else{
+            glDisableVertexAttribArray(i);
+        }
+    }
+}
+
 
 /**获取图像中人脸中心点*/
 - (CGPoint)getFaceCenterInFrameSize:(CGSize)frameSize{
