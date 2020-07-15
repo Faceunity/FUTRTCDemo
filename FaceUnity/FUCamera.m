@@ -16,6 +16,8 @@ typedef enum : NSUInteger {
     VideoRecordEndMode,
 } RunMode;
 
+typedef void(^FUCameraRecordVidepCompleted)(NSString *videoPath);
+
 
 @interface FUCamera()<AVCaptureVideoDataOutputSampleBufferDelegate,AVCaptureAudioDataOutputSampleBufferDelegate>
 {
@@ -32,9 +34,12 @@ typedef enum : NSUInteger {
 
 @property (assign, nonatomic) AVCaptureDevicePosition cameraPosition;
 
+
 @property (nonatomic, strong) AVCaptureDeviceInput      *audioMicInput;//麦克风输入
 @property (nonatomic, strong) AVCaptureAudioDataOutput  *audioOutput;//音频输出
-@property (copy, nonatomic) void(^recordVidepCompleted) (NSString *videoPath);
+@property (copy, nonatomic) FUCameraRecordVidepCompleted recordVidepCompleted;
+
+@property (assign, nonatomic) AVCaptureSessionPreset mSessionPreset;
 @end
 
 @implementation FUCamera
@@ -108,7 +113,7 @@ typedef enum : NSUInteger {
             [_captureSession addInput:self.audioMicInput];
         }
         
-//        [self addAudio];
+        [self addAudio];
         
         [self.videoConnection setVideoOrientation:AVCaptureVideoOrientationPortrait];
         if (self.videoConnection.supportsVideoMirroring && self.isFrontCamera) {
@@ -202,9 +207,16 @@ typedef enum : NSUInteger {
     return [self cameraWithPosition:AVCaptureDevicePositionBack];
 }
 
+-(BOOL)supportsAVCaptureSessionPreset:(BOOL)isFront {
+    if (isFront) {
+        return [self.frontCameraInput.device supportsAVCaptureSessionPreset:_mSessionPreset];
+    }else {
+        return [self.backCameraInput.device supportsAVCaptureSessionPreset:_mSessionPreset];
+    }
+}
+
 //切换前后置摄像头
-- (void)changeCameraInputDeviceisFront:(BOOL)isFront {
-    
+-(void)changeCameraInputDeviceisFront:(BOOL)isFront {
     [self.captureSession stopRunning];
     if (isFront) {
         [self.captureSession removeInput:self.backCameraInput];
@@ -233,7 +245,10 @@ typedef enum : NSUInteger {
     if (self.videoConnection.supportsVideoMirroring) {
         self.videoConnection.videoMirrored = isFront;
     }
+    
     [self.captureSession startRunning];
+   
+    
 }
 
 //用来返回是前置摄像头还是后置摄像头
@@ -303,6 +318,7 @@ typedef enum : NSUInteger {
 //设置采集格式
 - (void)setCaptureFormat:(int)captureFormat
 {
+    
     if (_captureFormat == captureFormat) {
         return;
     }
@@ -424,10 +440,22 @@ typedef enum : NSUInteger {
 
 
 #pragma  mark -  分辨率
--(void)changeSessionPreset:(AVCaptureSessionPreset)sessionPreset{
+-(BOOL)changeSessionPreset:(AVCaptureSessionPreset)sessionPreset{
+    
     if ([self.captureSession canSetSessionPreset:sessionPreset]) {
+        
+        if ([self.captureSession isRunning]) {
+            [self.captureSession stopRunning];
+        }
         _captureSession.sessionPreset = sessionPreset;
+        _mSessionPreset = sessionPreset;
+
+        [self.captureSession startRunning];
+
+       
+        return YES;
     }
+    return NO;
 }
 
 #pragma  mark -  镜像
@@ -500,7 +528,6 @@ typedef enum : NSUInteger {
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection{
     if (captureOutput == self.audioOutput) {
-
         return ;
     }
     
@@ -509,8 +536,10 @@ typedef enum : NSUInteger {
         [self.delegate didOutputVideoSampleBuffer:sampleBuffer];
     }
     
-    
+  
 }
+
+
 
 - (void)takePhotoAndSave
 {
@@ -526,8 +555,9 @@ typedef enum : NSUInteger {
 //停止录像
 - (void)stopRecordWithCompletionHandler:(void (^)(NSString *videoPath))handler
 {
-    runMode = VideoRecordEndMode;
     self.recordVidepCompleted =  handler;
+    runMode = VideoRecordEndMode;
+
 }
 
 - (UIImage *)imageFromPixelBuffer:(CVPixelBufferRef)pixelBufferRef {
@@ -571,6 +601,7 @@ typedef enum : NSUInteger {
     
     return image;
 }
+
 
 - (void)setCaptureVideoOrientation:(AVCaptureVideoOrientation) orientation {
     
