@@ -337,6 +337,12 @@ static NSString * const RecordFileNameKey = @"TRTC_RecordFilename";
         BOOL index = segment.selectedSegmentIndex;
         [_trtcEngine switchCamera];
         [[self class] setSettingValue:@(!index) key:SETTING_CAMERA];
+        
+        if ( [self.delegate respondsToSelector:@selector(switchCamera:)]) {
+            [self.delegate switchCamera:index];
+        }
+       
+        
     }
     else if (segment.tag == TAG_FILL_MODE) {
         NSInteger idx = segment.selectedSegmentIndex;

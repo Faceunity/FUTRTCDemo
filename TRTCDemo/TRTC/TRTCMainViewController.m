@@ -1035,6 +1035,10 @@ typedef enum : NSUInteger {
     }
 }
 
+-(void)switchCamera:(BOOL)index{
+    [_mCamera changeCameraInputDeviceisFront:index];
+}
+
 #pragma mark TRTCVideoViewDelegate
 - (void)onMuteVideoBtnClick:(TRTCVideoView *)view stateChanged:(BOOL)stateChanged
 {
