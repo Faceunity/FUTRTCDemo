@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onAudioVolumeEnableChanged:(BOOL)enable;
 - (void)onCloudMixingEnable:(BOOL)enable;
 
+- (void)switchCamera:(BOOL)index;
+
 @end
 
 @interface TRTCMoreViewController : UITableViewController
