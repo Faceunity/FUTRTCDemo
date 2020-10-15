@@ -5,9 +5,9 @@ typedef NS_ENUM(NSInteger, TX_Enum_Type_LogLevel) {
     LOGLEVEL_VERBOSE = 0,
     /// 输出 DEBUG，INFO，WARNING，ERROR 和 FATAL 级别的log
     LOGLEVEL_DEBUG = 1,
-    /// 输出 INFO，WARNNING，ERROR 和 FATAL 级别的log
+    /// 输出 INFO，WARNING，ERROR 和 FATAL 级别的log
     LOGLEVEL_INFO = 2,
-    /// 只输出WARNNING，ERROR 和 FATAL 级别的log
+    /// 只输出WARNING，ERROR 和 FATAL 级别的log
     LOGLEVEL_WARN = 3,
     /// 只输出ERROR 和 FATAL 级别的log
     LOGLEVEL_ERROR = 4,
@@ -66,6 +66,9 @@ typedef NS_ENUM(NSInteger, TX_Enum_Type_LogLevel) {
 
 /// 设置sdk的licence下载url和key
 + (void)setLicenceURL:(NSString *)url key:(NSString *)key;
+
+/// 设置userId，用于数据上报
++ (void)setUserId:(NSString *)userId;
 
 /// 获取 Licence 信息
 + (NSString *)getLicenceInfo;

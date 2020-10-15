@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class TRTCStatistics;
 
 
-/**
- * 腾讯云视频通话功能的事件回调接口
- */
+/// @defgroup TRTCCloudDelegate_ios TRTCCloudDelegate
+/// 腾讯云视频通话功能的事件回调接口
+/// @{
 @protocol TRTCCloudDelegate <NSObject>
 @optional
 
@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name 错误事件和警告事件
 /// @{
 /**
- * 1.1 错误回调：SDK 不可恢复的错误，一定要监听，并分情况给用户适当的界面提示。
+ * 1.1  错误回调，表示 SDK 不可恢复的错误，一定要监听并分情况给用户适当的界面提示。
  *
  * @param errCode 错误码
  * @param errMsg  错误信息
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onError:(TXLiteAVError)errCode errMsg:(nullable NSString *)errMsg extInfo:(nullable NSDictionary*)extInfo;
 
 /**
- * 1.2 警告回调：用于告知您一些非严重性问题，比如出现了卡顿或者可恢复的解码失败。
+ * 1.2 警告回调，用于告知您一些非严重性问题，例如出现了卡顿或者可恢复的解码失败。
  *
  * @param warningCode 警告码
  * @param warningMsg 警告信息
@@ -59,9 +59,10 @@ NS_ASSUME_NONNULL_BEGIN
  * 2.1 已加入房间的回调
  *
  * 调用 TRTCCloud 中的 enterRoom() 接口执行进房操作后，会收到来自 SDK 的 onEnterRoom(result) 回调：
- * 如果加入成功，result 会是一个正数（result > 0），代表加入房间的时间消耗，单位是毫秒（ms）。
- * 如果加入失败，result 会是一个负数（result < 0），代表进房失败的错误码。
- * 进房失败的错误码含义请查阅[错误码表](https://cloud.tencent.com/document/product/647/32257)。
+ * 
+ * - 如果加入成功，result 会是一个正数（result > 0），代表加入房间的时间消耗，单位是毫秒（ms）。
+ * - 如果加入失败，result 会是一个负数（result < 0），代表进房失败的错误码。
+ * 进房失败的错误码含义请参见[错误码](https://cloud.tencent.com/document/product/647/32257)。
  *
  * @note 在 Ver6.6 之前的版本，只有进房成功会抛出 onEnterRoom(result) 回调，进房失败由 onError() 回调抛出。
  *       在 Ver6.6 及之后改为：进房成功返回正的 result，进房失败返回负的 result，同时进房失败也会有 onError() 回调抛出。
@@ -73,11 +74,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * 2.2 离开房间的事件回调
  *
- * 调用 TRTCCloud 中的 exitRoom() 接口会执行退出房间的相关逻辑，比如释放音视频设备资源和编解码器资源等。
- * 待资源释放完毕之后，SDK 会通过 onExitRoom() 回调通知到您。
+ * 调用 TRTCCloud 中的 exitRoom() 接口会执行退出房间的相关逻辑，例如释放音视频设备资源和编解码器资源等。
+ * 待资源释放完毕，SDK 会通过 onExitRoom() 回调通知到您。
  *
  * 如果您要再次调用 enterRoom() 或者切换到其他的音视频 SDK，请等待 onExitRoom() 回调到来之后再执行相关操作。
- * 否则可能会遇到音频设备（比如 iOS 里的 AudioSession）被占用等各种异常问题。
+ * 否则可能会遇到音频设备（例如 iOS 里的 AudioSession）被占用等各种异常问题。
  *
  * @param reason 离开房间原因，0：主动调用 exitRoom 退房；1：被服务器踢出当前房间；2：当前房间整个被解散。
  */
@@ -89,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 调用 TRTCCloud 中的 switchRole() 接口会切换主播和观众的角色，该操作会伴随一个线路切换的过程，
  * 待 SDK 切换完成后，会抛出 onSwitchRole() 事件回调。
  *
- * @param errCode 错误码，ERR_NULL 代表切换成功，其他请查阅[错误码表](https://cloud.tencent.com/document/product/647/32257)。
+ * @param errCode 错误码，ERR_NULL 代表切换成功，其他请参见[错误码](https://cloud.tencent.com/document/product/647/32257)。
  * @param errMsg  错误信息。
  */
 - (void)onSwitchRole:(TXLiteAVError)errCode errMsg:(nullable NSString *)errMsg;
@@ -102,7 +103,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 如果成功，两个房间中的所有用户都会收到 PK 主播的 onUserVideoAvailable() 回调。
  *
  * @param userId 要 PK 的目标主播 userid。
- * @param errCode 错误码，ERR_NULL 代表切换成功，其他请查阅[错误码表](https://cloud.tencent.com/document/product/647/32257)。
+ * @param errCode 错误码，ERR_NULL 代表切换成功，其他请参见[错误码](https://cloud.tencent.com/document/product/647/32257)。
  * @param errMsg  错误信息。
  */
 - (void)onConnectOtherRoom:(NSString*)userId errCode:(TXLiteAVError)errCode errMsg:(nullable NSString *)errMsg;
@@ -121,36 +122,42 @@ NS_ASSUME_NONNULL_BEGIN
 /////////////////////////////////////////////////////////////////////////////////
 /// @name 成员事件回调
 /// @{
-	
-/**
- * 3.1 有用户（主播）加入当前房间
- *
- * 没有开启音视频上行的观众在加入房间时不会触发该通知，只有开启音视频上行的主播加入房间时才会触发该通知。
- * 通知参数中的 userid 也不一定都是开启视频的，可能只开启了声音的上行。
- *
- * 如果要显示远程画面，更推荐监听 onUserVideoAvailable() 事件回调。
- *
- * @param userId 用户标识
- */
-- (void)onUserEnter:(NSString *)userId;
 
 /**
- * 3.2 有用户（主播）离开当前房间
+ * 3.1 有用户加入当前房间
+ *
+ * 出于性能方面的考虑，在两种不同的应用场景下，该通知的行为会有差别：
+ * - 通话场景（TRTCAppSceneVideoCall 和 TRTCAppSceneAudioCall）：该场景下用户没有角色的区别，任何用户进入房间都会触发该通知。
+ * - 直播场景（TRTCAppSceneLIVE 和 TRTCAppSceneVoiceChatRoom）：该场景不限制观众的数量，如果任何用户进出都抛出回调会引起很大的性能损耗，所以该场景下只有主播进入房间时才会触发该通知，观众进入房间不会触发该通知。
+ *
+ *
+ * @note 注意 onRemoteUserEnterRoom 和 onRemoteUserLeaveRoom 只适用于维护当前房间里的“成员列表”，如果需要显示远程画面，建议使用监听 onUserVideoAvailable() 事件回调。
  *
  * @param userId 用户标识
- * @param reason 离开原因代码，区分用户是正常离开，还是由于网络断线等原因离开。
  */
-- (void)onUserExit:(NSString *)userId reason:(NSInteger)reason; 
-	
+- (void)onRemoteUserEnterRoom:(NSString *)userId;
+
 /**
- * 3.3 用户是否开启摄像头视频
+ * 3.2 有用户离开当前房间
  *
- * 当您收到 onUserVideoAvailable(userid, YES) 通知时，代表该路画面已经有可用的视频数据帧到达。
- * 之后，您需要调用 startRemoteView(userid) 接口加载该用户的远程画面。
- * 再之后，您还会收到名为 onFirstVideoFrame(userid) 的首帧画面渲染回调。
+ * 与 onRemoteUserEnterRoom 相对应，在两种不同的应用场景下，该通知的行为会有差别：
+ * - 通话场景（TRTCAppSceneVideoCall 和 TRTCAppSceneAudioCall）：该场景下用户没有角色的区别，任何用户的离开都会触发该通知。
+ * - 直播场景（TRTCAppSceneLIVE 和 TRTCAppSceneVoiceChatRoom）：只有主播离开房间时才会触发该通知，观众离开房间不会触发该通知。
  *
- * 当您收到了 onUserVideoAvailable(userid, NO) 通知时，代表该路远程画面已经被关闭，这可能是
- * 由于该用户调用了 muteLocalVideo() 或 stopLocalPreview() 所致。
+ * @param userId 用户标识
+ * @param reason 离开原因，0表示用户主动退出房间，1表示用户超时退出，2表示被踢出房间。
+ */
+- (void)onRemoteUserLeaveRoom:(NSString *)userId reason:(NSInteger)reason;
+
+/**
+ * 3.3 远端用户是否存在可播放的主路画面（一般用于摄像头）
+ *
+ * 当您收到 onUserVideoAvailable(userid, YES) 通知时，表示该路画面已经有可用的视频数据帧到达。
+ * 此时，您需要调用 startRemoteView(userid) 接口加载该用户的远程画面。
+ * 然后，您会收到名为 onFirstVideoFrame(userid) 的首帧画面渲染回调。
+ *
+ * 当您收到 onUserVideoAvailable(userid, NO) 通知时，表示该路远程画面已被关闭，
+ * 可能由于该用户调用了 muteLocalVideo() 或 stopLocalPreview()。
  *
  * @param userId 用户标识
  * @param available 画面是否开启
@@ -158,16 +165,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onUserVideoAvailable:(NSString *)userId available:(BOOL)available;
 
 /**
- * 3.4 用户是否开启屏幕分享
+ * 3.4 远端用户是否存在可播放的辅路画面（一般用于屏幕分享）
  * 
- * @note 显示辅路画面使用的函数不是 startRemoteView() 而是 startRemoteSubStreamView()。
+ * @note 显示辅路画面使用的函数是 startRemoteSubStreamView() 而非 startRemoteView()。
  * @param userId 用户标识
  * @param available 屏幕分享是否开启
  */
 - (void)onUserSubStreamAvailable:(NSString *)userId available:(BOOL)available;
 
 /**
- * 3.5 用户是否开启音频上行
+ * 3.5 远端用户是否存在可播放的音频数据
  *
  * @param userId 用户标识
  * @param available 声音是否开启
@@ -202,7 +209,7 @@ NS_ASSUME_NONNULL_BEGIN
  * SDK 会在 enterRoom() 并 startLocalPreview() 成功后开始摄像头采集，并将采集到的画面进行编码。
  * 当 SDK 成功向云端送出第一帧视频数据后，会抛出这个回调事件。
  *
- * @param streamType 视频流类型，大画面还是小画面或辅流画面（屏幕分享）
+ * @param streamType 视频流类型，主画面、小画面或辅流画面（屏幕分享）
  */ 
 - (void)onSendFirstLocalVideoFrame: (TRTCVideoStreamType)streamType;
 
@@ -213,6 +220,29 @@ NS_ASSUME_NONNULL_BEGIN
  * 当 SDK 成功向云端送出第一帧音频数据后，会抛出这个回调事件。
  */
 - (void)onSendFirstLocalAudioFrame;
+
+/**
+ * 3.10 废弃接口：有主播加入当前房间
+ *
+ * 该回调接口可以被看作是 onRemoteUserEnterRoom 的废弃版本，不推荐使用。请使用 onUserVideoAvailable 或 onRemoteUserEnterRoom 进行替代。
+ *
+ * @note 该接口已被废弃，不推荐使用
+ *
+ * @param userId 用户标识
+ */
+- (void)onUserEnter:(NSString *)userId DEPRECATED_ATTRIBUTE;
+
+/**
+ * 3.11 废弃接口：有主播离开当前房间
+ *
+ * 该回调接口可以被看作是 onRemoteUserLeaveRoom 的废弃版本，不推荐使用。请使用 onUserVideoAvailable 或 onRemoteUserEnterRoom 进行替代。
+ *
+ * @note 该接口已被废弃，不推荐使用
+ *
+ * @param userId 用户标识
+ * @param reason 离开原因。
+ */
+- (void)onUserExit:(NSString *)userId reason:(NSInteger)reason DEPRECATED_ATTRIBUTE;
 
 /// @}
 
@@ -226,7 +256,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @{
 
 /**
- * 4.1 网络质量：该回调每2秒触发一次，统计当前网络的上行和下行质量
+ * 4.1 网络质量，该回调每2秒触发一次，统计当前网络的上行和下行质量
  *
  * @note userId == nil 代表自己当前的视频质量
  *
@@ -295,7 +325,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if TARGET_OS_IPHONE
 /**
- * 6.3 音频路由发生变化（仅 iOS），音频路由即声音由哪里输出（扬声器、听筒）
+ * 6.3 音频路由发生变化（仅 iOS），音频路由即声音由哪里输出（扬声器或听筒）
  *
  * @param route     当前音频路由
  * @param fromRoute 变更前的音频路由
@@ -304,7 +334,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 /**
- * 6.4 用于提示音量大小的回调,包括每个 userId 的音量和远端总音量
+ * 6.4 用于提示音量大小的回调，包括每个 userId 的音量和远端总音量
  *
  * 您可以通过调用 TRTCCloud 中的 enableAudioVolumeEvaluation 接口来开关这个回调或者设置它的触发间隔。
  * 需要注意的是，调用 enableAudioVolumeEvaluation 开启音量回调后，无论频道内是否有人说话，都会按设置的时间间隔调用这个回调;
@@ -356,8 +386,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * 7.2 自定义消息丢失回调
  *
- * TRTC 所使用的传输通道为 UDP 通道，所以即使设置了 reliable，也做不到100%不丢失，只是丢消息概率极低，能满足常规可靠性要求。
- * 在过去的一段时间内（通常为5s），自定义消息在传输途中丢失的消息数量的统计，SDK 都会通过此回调通知出来。
+ * 实时音视频使用 UDP 通道，即使设置了可靠传输（reliable），也无法确保100@%不丢失，只是丢消息概率极低，能满足常规可靠性要求。
+ * 在发送端设置了可靠运输（reliable）后，SDK 都会通过此回调通知过去时间段内（通常为5s）传输途中丢失的自定义消息数量统计信息。
  *   
  * @note  只有在发送端设置了可靠传输（reliable），接收方才能收到消息的丢失回调
  * @param userId 用户标识
@@ -381,14 +411,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                      （八）CDN 旁路转推回调
+//                      （八）CDN 旁路回调
 //
 /////////////////////////////////////////////////////////////////////////////////
 /// @name CDN 旁路转推回调
 /// @{
 	
 /**
- * 8.1 启动旁路推流到 CDN 完成的回调
+ * 8.1 开始向腾讯云的直播 CDN 推流的回调，对应于 TRTCCloud 中的 startPublishing() 接口
+ *
+ * @param err 0表示成功，其余值表示失败
+ * @param errMsg 具体错误原因
+ */
+- (void)onStartPublishing:(int)err errMsg:(NSString*)errMsg;
+
+/**
+ * 8.2 停止向腾讯云的直播 CDN 推流的回调，对应于 TRTCCloud 中的 stopPublishing() 接口
+ *
+ * @param err 0表示成功，其余值表示失败
+ * @param errMsg 具体错误原因
+ */
+- (void)onStopPublishing:(int)err errMsg:(NSString*)errMsg;
+
+/**
+ * 8.3 启动旁路推流到 CDN 完成的回调
  *
  * 对应于 TRTCCloud 中的 startPublishCDNStream() 接口
  *
@@ -397,7 +443,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onStartPublishCDNStream:(int)err errMsg:(NSString *)errMsg;
 
 /**
- * 8.2 停止旁路推流到 CDN 完成的回调
+ * 8.4 停止旁路推流到 CDN 完成的回调
  *
  * 对应于 TRTCCloud 中的 stopPublishCDNStream() 接口
  *
@@ -405,7 +451,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onStopPublishCDNStream:(int)err errMsg:(NSString *)errMsg;
 
 /**
- * 8.3 设置云端的混流转码参数的回调，对应于 TRTCCloud 中的 setMixTranscodingConfig() 接口
+ * 8.5 设置云端的混流转码参数的回调，对应于 TRTCCloud 中的 setMixTranscodingConfig() 接口
  *
  * @param err 0表示成功，其余值表示失败
  * @param errMsg 具体错误原因
@@ -424,8 +470,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * 播放音效结束回调
  *
- * @param effectId
- * @param code 0： 表示播放正常结束；其他为异常结束
+ * @param effectId 音效 ID
+ * @param code 0表示播放正常结束；其他表示异常结束
  */
 - (void)onAudioEffectFinished:(int) effectId code:(int) code;
 /// @}
@@ -435,7 +481,7 @@ NS_ASSUME_NONNULL_BEGIN
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-/// @name 自定义消息的接收回调
+/// @name 屏幕分享回调
 /// @{
 /**
  * 10.1 当屏幕分享开始时，SDK 会通过此回调通知
@@ -462,6 +508,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param reason 停止原因，0：用户主动停止；1：屏幕窗口关闭导致停止
  */
 - (void)onScreenCaptureStoped:(int)reason;
+/// @}
 @end
 /// @}
 
@@ -471,7 +518,8 @@ NS_ASSUME_NONNULL_BEGIN
 //
 /////////////////////////////////////////////////////////////////////////////////
 #pragma mark - TRTCVideoRenderDelegate
-
+/// @addtogroup TRTCCloudDelegate_ios
+/// @{
 /**
  * 视频数据帧的自定义处理回调
  */
@@ -480,8 +528,8 @@ NS_ASSUME_NONNULL_BEGIN
  * 自定义视频渲染回调
  *
  * @param frame  待渲染的视频帧信息
- * @param userId 视频源的 userId，如果是本地视频回调（setLocalVideoRenderDelegate），该参数可以不用理会
- * @param streamType 视频源类型，比如是摄像头画面还是屏幕分享画面等等
+ * @param userId 视频源的 userId，如果是本地视频回调（setLocalVideoRenderDelegate），该参数可以忽略
+ * @param streamType 视频源类型，例如，使用摄像头画面或屏幕分享画面等
  */
 @optional
 - (void) onRenderVideoFrame:(TRTCVideoFrame * _Nonnull)frame userId:(NSString* __nullable)userId streamType:(TRTCVideoStreamType)streamType;
@@ -498,31 +546,43 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol TRTCAudioFrameDelegate <NSObject>
 @optional
+
 /**
- * 本地麦克风采集到的音频数据回调
+ * 本地麦克风采集到的原始音频数据回调
  *
+ * @param frame      音频数据
  * @note - 请不要在此回调函数中做任何耗时操作，建议直接拷贝到另一线程进行处理，否则会导致各种声音问题。
+ * @note - 此接口回调出的音频数据 **不包含** 背景音、音效、混响等前处理效果，延迟极低。
+ *       - 此接口回调出的音频数据支持修改。
+ */
+- (void) onCapturedRawAudioFrame:(TRTCAudioFrame *)frame;
+
+/**
+ * 本地采集并经过音频模块前处理后的音频数据回调
+ *
+ * @param frame      音频数据
+ * @note - 请不要在此回调函数中做任何耗时操作，建议直接拷贝到另一线程进行处理，否则会导致各种声音问题。
+ * @note - 此接口回调出的音频数据包含背景音、音效、混响等前处理效果，延迟较高。
  * @note - 此接口回调出的音频数据支持修改。
  * @note - 此接口回调出的音频时间帧长固定为0.02s。
            由时间帧长转化为字节帧长的公式为【采样率 × 时间帧长 × 声道数 × 采样点位宽】。
            以SDK默认的音频录制格式48000采样率、单声道、16采样点位宽为例，字节帧长为【48000 × 0.02s × 1 × 16bit = 15360bit = 1920字节】。
- * @note - 此接口回调出的音频数据包含背景音、音效、混响等前处理效果。
  */
-- (void) onCapturedAudioFrame:(TRTCAudioFrame *)frame;
+- (void) onLocalProcessedAudioFrame:(TRTCAudioFrame *)frame;
 
 /**
- * 混音前的每一路远程用户的音频数据（比如您要对某一路的语音进行文字转换，必须要使用这里的原始数据，而不是混音之后的数据）
+ * 混音前的每一路远程用户的音频数据，即混音前的各路原始数据。例如，对某一路音频进行文字转换时，您必须使用该路音频的原始数据
  *
  * @param frame      音频数据
  * @param userId     用户标识
- * @note - 请不要在此回调函数中做任何耗时操作，建议直接拷贝到另一线程进行处理，否则会导致各种声音问题。
  * @note - 此接口回调出的音频数据是只读的，不支持修改。
  */
-- (void) onPlayAudioFrame:(TRTCAudioFrame *)frame userId:(NSString *)userId;
+- (void) onRemoteUserAudioFrame:(TRTCAudioFrame *)frame userId:(NSString *)userId;
 
 /**
  * 各路音频数据混合后的音频数据
  *
+ * @param frame      音频数据
  * @note - 请不要在此回调函数中做任何耗时操作，建议直接拷贝到另一线程进行处理，否则会导致各种声音问题。
  * @note - 此接口回调出的音频数据支持修改。
  * @note - 此接口回调出的音频时间帧长固定为0.02s。
@@ -539,24 +599,23 @@ NS_ASSUME_NONNULL_BEGIN
 //                      （十三）Log 信息回调
 //
 /////////////////////////////////////////////////////////////////////////////////
-
 /**
  * 日志相关回调
  *
- * 建议在一个比较早初始化的类中设置回调委托对象，如 AppDelegate
+ * 建议在比较早初始化的类中设置回调委托对象，例如 AppDelegate
  */
 @protocol TRTCLogDelegate <NSObject>
 /**
  * 有日志打印时的回调
  *
  * @param log 日志内容
- * @param level 日志等级 参见 TRTCLogLevel
+ * @param level 日志等级，参见 TRTCLogLevel
  * @param module 值暂无具体意义，目前为固定值 TXLiteAVSDK
  */
 @optional
 -(void) onLog:(nullable NSString*)log LogLevel:(TRTCLogLevel)level WhichModule:(nullable NSString*)module;
 
 @end
-
+/// @}
 
 NS_ASSUME_NONNULL_END

@@ -109,11 +109,11 @@ typedef void(^FUCameraRecordVidepCompleted)(NSString *videoPath);
             [_captureSession addOutput:self.videoOutput];
         }
         
-        if ([_captureSession canAddInput:self.audioMicInput]) {
-            [_captureSession addInput:self.audioMicInput];
-        }
+//        if ([_captureSession canAddInput:self.audioMicInput]) {
+//            [_captureSession addInput:self.audioMicInput];
+//        }
         
-        [self addAudio];
+//        [self addAudio];
         
         [self.videoConnection setVideoOrientation:AVCaptureVideoOrientationPortrait];
         if (self.videoConnection.supportsVideoMirroring && self.isFrontCamera) {

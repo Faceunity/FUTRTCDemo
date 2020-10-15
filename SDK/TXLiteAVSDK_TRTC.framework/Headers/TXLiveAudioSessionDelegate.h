@@ -10,6 +10,9 @@
 - (BOOL)setActive:(BOOL)active error:(NSError **)outError;
 
 @optional
+- (BOOL)setActive:(BOOL)active withOptions:(AVAudioSessionSetActiveOptions)options error:(NSError **)outError;
+
+@optional
 - (BOOL)setMode:(NSString *)mode error:(NSError **)outError;
 
 @optional
@@ -27,7 +30,11 @@
 - (BOOL)setPreferredSampleRate:(double)sampleRate error:(NSError **)outError;
 
 @optional
+- (BOOL)setPreferredOutputNumberOfChannels:(NSInteger)count error:(NSError **)outError;
+
+@optional
 - (BOOL)overrideOutputAudioPort:(AVAudioSessionPortOverride)portOverride error:(NSError **)outError;
+
 #endif
 @end
 #endif /* TXLiveAudioSessionDelegate_h */
