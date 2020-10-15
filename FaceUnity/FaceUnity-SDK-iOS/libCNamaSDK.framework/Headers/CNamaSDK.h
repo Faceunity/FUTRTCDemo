@@ -51,15 +51,16 @@ typedef enum FUAITYPE {
   FUAITYPE_BACKGROUNDSEGMENTATION_GREEN = 1 << 9,
   FUAITYPE_FACEPROCESSOR = 1 << 10,
   FUAITYPE_FACEPROCESSOR_FACECAPTURE = 1 << 11,
-  FUAITYPE_FACEPROCESSOR_HAIRSEGMENTATION = 1 << 12,
-  FUAITYPE_FACEPROCESSOR_HEADSEGMENTATION = 1 << 13,
-  FUAITYPE_HUMAN_PROCESSOR = 1 << 14,
-  FUAITYPE_HUMAN_PROCESSOR_DETECT = 1 << 15,
-  FUAITYPE_HUMAN_PROCESSOR_2D_SELFIE = 1 << 16,
-  FUAITYPE_HUMAN_PROCESSOR_2D_DANCE = 1 << 17,
-  FUAITYPE_HUMAN_PROCESSOR_3D_SELFIE = 1 << 18,
-  FUAITYPE_HUMAN_PROCESSOR_3D_DANCE = 1 << 19,
-  FUAITYPE_HUMAN_PROCESSOR_SEGMENTATION = 1 << 20
+  FUAITYPE_FACEPROCESSOR_FACECAPTURE_TONGUETRACKING = 1 << 12,
+  FUAITYPE_FACEPROCESSOR_HAIRSEGMENTATION = 1 << 13,
+  FUAITYPE_FACEPROCESSOR_HEADSEGMENTATION = 1 << 14,
+  FUAITYPE_HUMAN_PROCESSOR = 1 << 15,
+  FUAITYPE_HUMAN_PROCESSOR_DETECT = 1 << 16,
+  FUAITYPE_HUMAN_PROCESSOR_2D_SELFIE = 1 << 17,
+  FUAITYPE_HUMAN_PROCESSOR_2D_DANCE = 1 << 18,
+  FUAITYPE_HUMAN_PROCESSOR_3D_SELFIE = 1 << 19,
+  FUAITYPE_HUMAN_PROCESSOR_3D_DANCE = 1 << 20,
+  FUAITYPE_HUMAN_PROCESSOR_SEGMENTATION = 1 << 21
 } FUAITYPE;
 
 typedef enum FUAIGESTURETYPE {
@@ -95,6 +96,25 @@ typedef enum FULOGLEVEL {
   FU_LOG_LEVEL_OFF = 6
 } FULOGLEVEL;
 
+typedef enum FUAIEXPRESSIONTYPE {
+  FUAIEXPRESSION_UNKNOWN = 0,
+  FUAIEXPRESSION_SMILE = 1 << 1,
+  FUAIEXPRESSION_MOUTH_OPEN = 1 << 2,
+  FUAIEXPRESSION_EYE_BLINK = 1 << 3,
+  FUAIEXPRESSION_POUT = 1 << 4,
+} FUAIEXPRESSIONTYPE;
+
+typedef enum FUAITONGUETYPE {
+  FUAITONGUE_UNKNOWN = 0,
+  FUAITONGUE_UP = 1 << 1,
+  FUAITONGUE_DOWN = 1 << 2,
+  FUAITONGUE_LEFT = 1 << 3,
+  FUAITONGUE_RIGHT = 1 << 4,
+  FUAITONGUE_LEFT_UP = 1 << 5,
+  FUAITONGUE_LEFT_DOWN = 1 << 6,
+  FUAITONGUE_RIGHT_UP = 1 << 7,
+  FUAITONGUE_RIGHT_DOWN = 1 << 8,
+} FUAITONGUETYPE;
 #define FU_ROTATION_MODE_0 0
 #define FU_ROTATION_MODE_90 1
 #define FU_ROTATION_MODE_180 2
@@ -318,6 +338,12 @@ FUNAMA_API int fuSetupLocal(float* v3data, int sz_v3data, float* ardata,
                             void** offline_bundle_ptr, int* offline_bundle_sz);
 
 /**
+ \brief if opengl is supported return 1, else return 0
+        call after fuSetup
+*/
+FUNAMA_API int fuGetOpenGLSupported();
+
+/**
  \brief Generalized interface for rendering a list of items with extension.
         This function needs a GLES 2.0+ context.
  \param out_format is the output format
@@ -466,6 +492,8 @@ FUNAMA_API int fuBeautifyImage(int out_format, void* out_ptr, int in_format,
 */
 FUNAMA_API int fuCreateItemFromPackage(void* data, int sz);
 
+FUNAMA_API int fuCreateLiteItemFromPackage(int handle, void* data, int sz);
+
 /**
  \brief Destroy an accessory item. This function no need to be called in the
  same GLES context / thread as the original fuCreateItemFromPackage.
@@ -483,6 +511,12 @@ FUNAMA_API void fuDestroyAllItems();
 \brief Destroy all internal data, resources, threads, etc.
 */
 FUNAMA_API void fuDestroyLibData();
+
+/**
+\brief Call this function when the GLES context has been lost, this function
+won't do gl resource release, it only reset cpu flags.
+*/
+FUNAMA_API void fuOnDeviceLostSafe();
 
 /**
 \brief Call this function when the GLES context has been lost and recreated.
@@ -1017,6 +1051,14 @@ FUNAMA_API int fuSetFaceProcessorFov(float fov);
 FUNAMA_API float fuGetFaceProcessorFov();
 
 /**
+ \brief set faceprocessor's face detect mode. when use 1 for video mode, face
+ detect strategy is opimized for no face scenario. In image process scenario,
+ you should set detect mode into 0 image mode.
+ \param mode, 0 for image, 1 for video, 1 by default
+ */
+FUNAMA_API int fuSetFaceProcessorDetectMode(int mode);
+
+/**
 \brief Count API calls.
 \param name is the API name
 */
@@ -1283,6 +1325,16 @@ FUNAMA_API const float* fuHumanProcessorGetResultRect(int index);
 FUNAMA_API const float* fuHumanProcessorGetResultJoint2ds(int index, int* size);
 
 /**
+ \brief get ai model HumanProcessor's tracking fov, use to 3d joint projection.
+ */
+FUNAMA_API float fuHumanProcessorGetFov();
+
+/**
+ \brief set ai model HumanProcessor's tracking fov, use to 3d joint projection.
+ */
+FUNAMA_API void fuHumanProcessorSetFov(float fov);
+
+/**
  \brief get ai model HumanProcessor's tracking 3d joint with index.
  \param index, index of fuHumanProcessorGetNumResults
  \param size,  size of return data.
@@ -1407,6 +1459,14 @@ FUNAMA_API int fuSetUsePbo(bool use);
  \param quality, 0:high 1:medium 2.low
 */
 FUNAMA_API int fuSetLoadQuality(int quality);
+
+/**
+ \brief set if use the output texture for async reading, when use spcified
+ framebuffer for output. \param use,set 1 for use or 0 for not use, not use by
+ default for performance.
+*/
+FUNAMA_API int fuSetUseTexAsync(bool use);
+
 #ifdef __cplusplus
 }
 #endif
