@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D661D6E251B66CF00DB0704 /* TXLiteAVSDK_TRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D661D6D251B66CE00DB0704 /* TXLiteAVSDK_TRTC.framework */; };
+		2D661D6F251B66CF00DB0704 /* TXLiteAVSDK_TRTC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D661D6D251B66CE00DB0704 /* TXLiteAVSDK_TRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2D661D71251B681200DB0704 /* TXLiteAVSDK_ReplayKitExt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D661D70251B681200DB0704 /* TXLiteAVSDK_ReplayKitExt.framework */; };
+		2D661D72251B681200DB0704 /* TXLiteAVSDK_ReplayKitExt.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D661D70251B681200DB0704 /* TXLiteAVSDK_ReplayKitExt.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2D661D74251B682700DB0704 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D661D73251B682700DB0704 /* Accelerate.framework */; };
+		2D661D78251B685F00DB0704 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D661D77251B685F00DB0704 /* ReplayKit.framework */; };
 		455E7F442317D81C00F5BA97 /* CustomAudioFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 455E7F432317D81C00F5BA97 /* CustomAudioFileReader.m */; };
 		918EFF7C21D727C3007CF83A /* GenerateTestUserSig.m in Sources */ = {isa = PBXBuildFile; fileRef = 918EFF7621D727C2007CF83A /* GenerateTestUserSig.m */; };
 		918EFF7D21D727C3007CF83A /* TRTCMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 918EFF7821D727C3007CF83A /* TRTCMainViewController.m */; };
@@ -55,14 +61,12 @@
 		D689A8D921CC8D4E00C7C618 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = D689A8C321CC8D4E00C7C618 /* AFURLRequestSerialization.m */; };
 		D689A8DA21CC8D4E00C7C618 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D689A8C521CC8D4E00C7C618 /* AFNetworkReachabilityManager.m */; };
 		D689A8DB21CC8D4E00C7C618 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = D689A8C621CC8D4E00C7C618 /* AFSecurityPolicy.m */; };
-		D689A92021CC921700C7C618 /* TXLiteAVSDK_TRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D689A91F21CC921700C7C618 /* TXLiteAVSDK_TRTC.framework */; };
 		D689A92221CC927A00C7C618 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D689A92121CC927A00C7C618 /* libc++.tbd */; };
 		D6940FEB21CC8A1000469982 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6940FEA21CC8A1000469982 /* AppDelegate.m */; };
 		D6940FF121CC8A1000469982 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6940FEF21CC8A1000469982 /* Main.storyboard */; };
 		D6940FF321CC8A1100469982 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6940FF221CC8A1100469982 /* Assets.xcassets */; };
 		D6940FF621CC8A1100469982 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6940FF421CC8A1100469982 /* LaunchScreen.storyboard */; };
 		D6940FF921CC8A1100469982 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6940FF821CC8A1100469982 /* main.m */; };
-		E30985C824B411150070A5A7 /* ai_gesture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E30985BB24B411110070A5A7 /* ai_gesture.bundle */; };
 		E30985C924B411150070A5A7 /* ai_face_processor.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E30985BC24B411110070A5A7 /* ai_face_processor.bundle */; };
 		E30985CA24B411150070A5A7 /* ai_face_processor_lite.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E30985BD24B411110070A5A7 /* ai_face_processor_lite.bundle */; };
 		E30985CB24B411150070A5A7 /* ai_human_processor.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E30985BE24B411110070A5A7 /* ai_human_processor.bundle */; };
@@ -110,6 +114,7 @@
 		E32453E524A1AA6F00BFC893 /* FUBeautyView.m in Sources */ = {isa = PBXBuildFile; fileRef = E32453AF24A1AA6F00BFC893 /* FUBeautyView.m */; };
 		E32453E624A1AA6F00BFC893 /* FUDateHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = E32453B224A1AA6F00BFC893 /* FUDateHandle.m */; };
 		E32453E824A1AAEE00BFC893 /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E32453E724A1AAEE00BFC893 /* CoreML.framework */; };
+		E36B297424B71051009984DE /* FUTestRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = E36B297224B71051009984DE /* FUTestRecorder.m */; };
 		E3832E7E24078A8400A46DBA /* FUCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = E3832E6824078A8400A46DBA /* FUCamera.m */; };
 /* End PBXBuildFile section */
 
@@ -121,12 +126,20 @@
 			dstSubfolderSpec = 10;
 			files = (
 				E30985D524B411F80070A5A7 /* libCNamaSDK.framework in CopyFiles */,
+				2D661D72251B681200DB0704 /* TXLiteAVSDK_ReplayKitExt.framework in CopyFiles */,
+				2D661D6F251B66CF00DB0704 /* TXLiteAVSDK_TRTC.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D661D6D251B66CE00DB0704 /* TXLiteAVSDK_TRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TXLiteAVSDK_TRTC.framework; path = SDK/TXLiteAVSDK_TRTC.framework; sourceTree = "<group>"; };
+		2D661D70251B681200DB0704 /* TXLiteAVSDK_ReplayKitExt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TXLiteAVSDK_ReplayKitExt.framework; path = SDK/TXLiteAVSDK_ReplayKitExt.framework; sourceTree = "<group>"; };
+		2D661D73251B682700DB0704 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		2D661D75251B683E00DB0704 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		2D661D76251B685000DB0704 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		2D661D77251B685F00DB0704 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		455E7F422317D81C00F5BA97 /* CustomAudioFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomAudioFileReader.h; sourceTree = "<group>"; };
 		455E7F432317D81C00F5BA97 /* CustomAudioFileReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomAudioFileReader.m; sourceTree = "<group>"; };
 		918EFF7621D727C2007CF83A /* GenerateTestUserSig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenerateTestUserSig.m; sourceTree = "<group>"; };
@@ -230,7 +243,6 @@
 		D689A8C521CC8D4E00C7C618 /* AFNetworkReachabilityManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkReachabilityManager.m; sourceTree = "<group>"; };
 		D689A8C621CC8D4E00C7C618 /* AFSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFSecurityPolicy.m; sourceTree = "<group>"; };
 		D689A8C721CC8D4E00C7C618 /* AFHTTPSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPSessionManager.h; sourceTree = "<group>"; };
-		D689A91F21CC921700C7C618 /* TXLiteAVSDK_TRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TXLiteAVSDK_TRTC.framework; path = SDK/TXLiteAVSDK_TRTC.framework; sourceTree = "<group>"; };
 		D689A92121CC927A00C7C618 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		D6940FE621CC8A1000469982 /* TRTCDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TRTCDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6940FE921CC8A1000469982 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -240,7 +252,6 @@
 		D6940FF521CC8A1100469982 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6940FF721CC8A1100469982 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6940FF821CC8A1100469982 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		E30985BB24B411110070A5A7 /* ai_gesture.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_gesture.bundle; sourceTree = "<group>"; };
 		E30985BC24B411110070A5A7 /* ai_face_processor.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_face_processor.bundle; sourceTree = "<group>"; };
 		E30985BD24B411110070A5A7 /* ai_face_processor_lite.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_face_processor_lite.bundle; sourceTree = "<group>"; };
 		E30985BE24B411110070A5A7 /* ai_human_processor.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_human_processor.bundle; sourceTree = "<group>"; };
@@ -302,6 +313,8 @@
 		E32453B624A1AA6F00BFC893 /* FUAPIDemoBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUAPIDemoBar.h; sourceTree = "<group>"; };
 		E32453B724A1AA6F00BFC893 /* UIImage+demobar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+demobar.h"; sourceTree = "<group>"; };
 		E32453E724A1AAEE00BFC893 /* CoreML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreML.framework; path = System/Library/Frameworks/CoreML.framework; sourceTree = SDKROOT; };
+		E36B297224B71051009984DE /* FUTestRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUTestRecorder.m; sourceTree = "<group>"; };
+		E36B297324B71051009984DE /* FUTestRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUTestRecorder.h; sourceTree = "<group>"; };
 		E3832E5C24078A8400A46DBA /* FUCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUCamera.h; sourceTree = "<group>"; };
 		E3832E6824078A8400A46DBA /* FUCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUCamera.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -312,9 +325,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E32453E824A1AAEE00BFC893 /* CoreML.framework in Frameworks */,
+				2D661D6E251B66CF00DB0704 /* TXLiteAVSDK_TRTC.framework in Frameworks */,
+				2D661D78251B685F00DB0704 /* ReplayKit.framework in Frameworks */,
 				D689A92221CC927A00C7C618 /* libc++.tbd in Frameworks */,
+				2D661D74251B682700DB0704 /* Accelerate.framework in Frameworks */,
 				E30985D424B411F80070A5A7 /* libCNamaSDK.framework in Frameworks */,
-				D689A92021CC921700C7C618 /* TXLiteAVSDK_TRTC.framework in Frameworks */,
+				2D661D71251B681200DB0704 /* TXLiteAVSDK_ReplayKitExt.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,9 +538,14 @@
 		D689A91E21CC921700C7C618 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D661D77251B685F00DB0704 /* ReplayKit.framework */,
+				2D661D76251B685000DB0704 /* libresolv.tbd */,
+				2D661D75251B683E00DB0704 /* libiconv.tbd */,
+				2D661D73251B682700DB0704 /* Accelerate.framework */,
+				2D661D70251B681200DB0704 /* TXLiteAVSDK_ReplayKitExt.framework */,
+				2D661D6D251B66CE00DB0704 /* TXLiteAVSDK_TRTC.framework */,
 				E32453E724A1AAEE00BFC893 /* CoreML.framework */,
 				D689A92121CC927A00C7C618 /* libc++.tbd */,
-				D689A91F21CC921700C7C618 /* TXLiteAVSDK_TRTC.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -577,7 +598,6 @@
 		E30985BA24B411110070A5A7 /* model */ = {
 			isa = PBXGroup;
 			children = (
-				E30985BB24B411110070A5A7 /* ai_gesture.bundle */,
 				E30985BC24B411110070A5A7 /* ai_face_processor.bundle */,
 				E30985BD24B411110070A5A7 /* ai_face_processor_lite.bundle */,
 				E30985BE24B411110070A5A7 /* ai_human_processor.bundle */,
@@ -684,6 +704,8 @@
 				E324539824A1AA6F00BFC893 /* FUAPIDemoBar */,
 				E324536D24A1AA4A00BFC893 /* FUManager.h */,
 				E324538324A1AA6700BFC893 /* FUManager.m */,
+				E36B297324B71051009984DE /* FUTestRecorder.h */,
+				E36B297224B71051009984DE /* FUTestRecorder.m */,
 				E324538424A1AA6800BFC893 /* items */,
 			);
 			path = FaceUnity;
@@ -754,7 +776,6 @@
 			files = (
 				D60331A4224E47860019E640 /* QBImagePicker.strings in Resources */,
 				E32453CE24A1AA6F00BFC893 /* sdlu.bundle in Resources */,
-				E30985C824B411150070A5A7 /* ai_gesture.bundle in Resources */,
 				E32453D424A1AA6F00BFC893 /* DaisyPig.png in Resources */,
 				E32453D224A1AA6F00BFC893 /* jianling.bundle in Resources */,
 				E30985D224B411150070A5A7 /* face_beautification.bundle in Resources */,
@@ -841,6 +862,7 @@
 				D689A8CE21CC8D4E00C7C618 /* UIRefreshControl+AFNetworking.m in Sources */,
 				D6033186224E475A0019E640 /* TestRenderVideoFrame.m in Sources */,
 				D60331A7224E47860019E640 /* QBAlbumCell.m in Sources */,
+				E36B297424B71051009984DE /* FUTestRecorder.m in Sources */,
 				D660B0D922329AB1009851F3 /* NSString+Common.m in Sources */,
 				D689A8CB21CC8D4E00C7C618 /* TRTCSettingViewController.m in Sources */,
 				D689A8CC21CC8D4E00C7C618 /* UIView+Additions.m in Sources */,
@@ -983,7 +1005,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 35A6KD62ZJ;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1004,7 +1026,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.mrtc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = FUWildcard;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = DailyBuild;
@@ -1126,7 +1148,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 35A6KD62ZJ;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1147,7 +1169,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.mrtc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = FUWildcard;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1157,7 +1179,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 35A6KD62ZJ;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1178,7 +1200,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.mrtc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = FUWildcard;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

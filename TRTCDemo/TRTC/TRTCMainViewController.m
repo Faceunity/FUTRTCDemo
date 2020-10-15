@@ -31,6 +31,7 @@
 #import "FUAPIDemoBar.h"
 #import "FUManager.h"
 #import "FUCamera.h"
+#import "FUTestRecorder.h"
 
 
 // TRTC的bizid的appid用于转推直播流，https://console.cloud.tencent.com/rav 点击【应用】【帐号信息】
@@ -109,10 +110,14 @@ typedef enum : NSUInteger {
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = NO;
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
+
+    [_trtc startLocalAudio];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+//     [_trtc stopLocalAudio];
     self.navigationController.navigationBar.hidden = YES;
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
 
@@ -300,6 +305,7 @@ typedef enum : NSUInteger {
     
 //
     [[FUManager shareManager] loadFilter];
+//    [[FUTestRecorder shareRecorder] setupRecord];
     [self.view addSubview:self.demoBar];
 //
 }
@@ -322,7 +328,9 @@ typedef enum : NSUInteger {
 }
 
 -(void)switchRenderState:(BOOL)state{
+
     [FUManager shareManager].isRender = state;
+
 }
 
 -(void)bottomDidChange:(int)index{
@@ -553,17 +561,17 @@ typedef enum : NSUInteger {
     [_trtc setAudioRoute:[TRTCMoreViewController isSpeakphoneMode] ? TRTCAudioModeSpeakerphone : TRTCAudioModeEarpiece];
     [_trtc enableAudioVolumeEvaluation:[TRTCMoreViewController isAudioVolumeEnable]?300:0];
     
-    if ((_appScene == TRTCAppSceneLIVE && _param.role == TRTCRoleAudience) ) {
-        [_trtc stopLocalAudio];
-    } else {
-        if (![TRTCMoreViewController isAudioCaptureEnable]) {
-//            [_trtc enableCustomAudioCapture:YES];
-//            [[CustomAudioFileReader sharedInstance] start:48000 nChannels:1 nSampleLen:960*2];
-//            [CustomAudioFileReader sharedInstance].delegate = self;
-        } else {
-            [_trtc startLocalAudio];
-        }
-    }
+//    if ((_appScene == TRTCAppSceneLIVE && _param.role == TRTCRoleAudience) ) {
+//        [_trtc stopLocalAudio];
+//    } else {
+//        if (![TRTCMoreViewController isAudioCaptureEnable]) {
+////            [_trtc enableCustomAudioCapture:YES];
+////            [[CustomAudioFileReader sharedInstance] start:48000 nChannels:1 nSampleLen:960*2];
+////            [CustomAudioFileReader sharedInstance].delegate = self;
+//        } else {
+//            [_trtc startLocalAudio];
+//        }
+//    }
 
     
     if (self.enableCustomVideoCapture && self.customMediaAsset) {
@@ -585,7 +593,7 @@ typedef enum : NSUInteger {
     [self toastTip:@"开始进房"];
     
     // 进房
-    [_trtc enterRoom:self.param appScene:_appScene];
+    [_trtc enterRoom:self.param appScene:TRTCAppSceneVideoCall];
     
     
 }
@@ -596,10 +604,13 @@ typedef enum : NSUInteger {
  */
 - (void)exitRoom {
     [_trtc exitRoom];
+     [_trtc stopLocalAudio];
+    
     [_customVideoCaptureTester stop];
     _customVideoRenderTester = nil;
     
     [_trtc enableCustomAudioCapture:NO];
+   
 
     [[CustomAudioFileReader sharedInstance] stop];
     [CustomAudioFileReader sharedInstance].delegate = nil;
@@ -614,7 +625,8 @@ typedef enum : NSUInteger {
 -(FUCamera *)mCamera {
     if (!_mCamera) {
         _mCamera = [[FUCamera alloc] init];
-        _mCamera.delegate = self ;
+        _mCamera.delegate = self;
+        [_mCamera changeCameraInputDeviceisFront:[TRTCMoreViewController isFrontCamera]];
     }
     return _mCamera ;
 }
@@ -630,6 +642,8 @@ typedef enum : NSUInteger {
         
         [_trtc enableCustomVideoCapture:YES];
         [self.mCamera startCapture];
+        [self.mCamera changeSessionPreset:AVCaptureSessionPreset1280x720];
+        self.mCamera.captureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
         
         if (!_customVideoRenderTester)
             _customVideoRenderTester = [TestRenderVideoFrame new];
@@ -642,12 +656,12 @@ typedef enum : NSUInteger {
 
     }
     //开摄像头
-    else {
-        //视频通话默认开摄像头。直播模式主播才开摄像头
-        if (_appScene == TRTCAppSceneVideoCall || _param.role == TRTCRoleAnchor) {
-            [_trtc startLocalPreview:[TRTCMoreViewController isFrontCamera] view:_localView];
-        }
-    }
+//    else {
+//        //视频通话默认开摄像头。直播模式主播才开摄像头
+//        if (_appScene == TRTCAppSceneVideoCall || _param.role == TRTCRoleAnchor) {
+//            [_trtc startLocalPreview:[TRTCMoreViewController isFrontCamera] view:_localView];
+//        }
+//    }
 }
 
 - (void)stopPreview
@@ -837,14 +851,14 @@ typedef enum : NSUInteger {
 #pragma mark - FUCameraDelegate
 
 -(void)didOutputVideoSampleBuffer:(CMSampleBufferRef)sampleBuffer {
-    
+//    [[FUTestRecorder shareRecorder] processFrameWithLog];
     CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) ;
     NSTimeInterval startTime =  [[NSDate date] timeIntervalSince1970];
     [[FUManager shareManager] renderItemsToPixelBuffer:pixelBuffer];
     TRTCVideoFrame* videoFrame = [TRTCVideoFrame new];
     videoFrame.bufferType = TRTCVideoBufferType_PixelBuffer;
-    videoFrame.pixelFormat = TRTCVideoPixelFormat_32BGRA;
-    videoFrame.pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    videoFrame.pixelFormat = TRTCVideoPixelFormat_NV12;
+    videoFrame.pixelBuffer = pixelBuffer;
     TRTCVideoRotation rotation = TRTCVideoRotation_0;
     
     [_trtc sendCustomVideoData:videoFrame];
@@ -1036,7 +1050,7 @@ typedef enum : NSUInteger {
 }
 
 -(void)switchCamera:(BOOL)index{
-    [_mCamera changeCameraInputDeviceisFront:index];
+    [_mCamera changeCameraInputDeviceisFront:!index];
 }
 
 #pragma mark TRTCVideoViewDelegate

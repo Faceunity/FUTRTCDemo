@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/// @defgroup TXLivePlayConfig_ios TXLivePlayConfig
+/// 腾讯云直播播放器的参数配置模块
+/// @{
+
 /**
  * 腾讯云直播播放器的参数配置模块
  *
@@ -61,6 +65,16 @@
 ///【特别说明】每条音视频流中只能设置一个 MetaData 数据头，除非断网重连，否则 TXLivePlayer 的 EVT_PLAY_GET_METADATA 消息也只会收到一次。
 @property(nonatomic, assign) BOOL enableMetaData;
 
+///【字段含义】是否开启 HTTP 头信息回调，默认值为 @“”
+/// HTTP 响应头中除了“content-length”、“content-type”等标准字段，不同云服务商还可能会添加一些非标准字段。
+/// 比如腾讯云会在直播 CDN 的 HTTP-FLV 格式的直播流中增加 “X-Tlive-SpanId” 响应头，并在其中设置一个随机字符串，用来唯一标识一次直播。
+/// 
+/// 如果您在使用腾讯云的直播 CDN，可以设置 flvSessionKey 为 @“X-Tlive-SpanId”，SDK 会在 HTTP 响应头里解析这个字段，
+/// 并通过 TXLivePlayListener 中的 onPlayEvent(EVT_PLAY_GET_FLVSESSIONKEY) 事件通知给您的 App。
+///
+///【特别说明】每条音视频流中只能解析一个 flvSessionKey，除非断网重连，否则 EVT_PLAY_GET_FLVSESSIONKEY 只会抛送一次。
+@property(nonatomic, copy) NSString* flvSessionKey;
+
 ///【字段含义】视频渲染对象回调的视频格式，默认值：kCVPixelFormatType_420YpCbCr8Planar
 ///【特别说明】支持：kCVPixelFormatType_420YpCbCr8Planar 和 kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
 @property(nonatomic, assign) OSType playerPixelFormatType;
@@ -88,3 +102,4 @@
 #endif
 
 @end
+/// @}
