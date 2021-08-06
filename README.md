@@ -6,22 +6,24 @@ FUTRTCDemo 是集成了 [Faceunity](https://github.com/Faceunity/FULiveDemo/tree
 
 **关于  FaceUnity SDK 的更多详细说明，请参看 [FULiveDemo](https://github.com/Faceunity/FULiveDemo/tree/dev)**
 
+
+
 ## 快速集成方法
 
 ### 一、导入 SDK
 
-将  FaceUnity  文件夹全部拖入工程中，NamaSDK所需依赖库为 `OpenGLES.framework`、`Accelerate.framework`、`CoreMedia.framework`、`AVFoundation.framework`、`libc++.tbd`
+将  FaceUnity  文件夹全部拖入工程中，NamaSDK所需依赖库为 `OpenGLES.framework`、`Accelerate.framework`、`CoreMedia.framework`、`AVFoundation.framework`、`libc++.tbd`、`CoreML.framework`
 
-- 备注: 示例demo NamaSDK 使用 Pods 管理 会自动添加依赖
+- 备注: 示例demo NamaSDK 使用 Pods 管理 会自动添加依赖,运行在iOS11以下系统时,需要手动添加`CoreML.framework`,并在**TARGETS -> Build Phases-> Link Binary With Libraries**将`CoreML.framework`手动修改为可选**Optional**
 
 ### FaceUnity 模块简介
-
-```objc
+```C
 -FUManager              //nama 业务类
 -FUCamera               //视频采集类(示例程序未用到)    
 -authpack.h             //权限文件
 +FUAPIDemoBar     //美颜工具条,可自定义
-+items       //贴纸和美妆资源 xx.bundel文件   
++items       //贴纸和美妆资源 xx.bundel文件
+      
 ```
 
 
@@ -31,66 +33,34 @@ FUTRTCDemo 是集成了 [Faceunity](https://github.com/Faceunity/FULiveDemo/tree
 
 ```objc
 /**faceU */
-#import "FUManager.h"
-#import "FUAPIDemoBar.h"
-
-@property (nonatomic, strong) FUAPIDemoBar *demoBar;
+#import "UIViewController+FaceUnityUIExtension.h"
+#import <FURenderKit/FUGLContext.h>
 
 // 使用纹理渲染时,记录当前glcontext
 @property(nonatomic, strong) EAGLContext *mContext;
 ```
-2、在 `viewDidLoad` 中初始化 FaceUnity SDK
+2、在 `viewDidLoad` 中初始化 FaceUnity的界面和 SDK，FaceUnity界面工具和SDK都放在UIViewController+FaceUnityUIExtension中初始化了，也可以自行调用FUAPIDemoBar和FUManager初始化
 
 ```objc
-/**faceU */
-[[FUManager shareManager] loadFilter];
-[FUManager shareManager].isRender = YES;
-[FUManager shareManager].flipx = YES;
-[FUManager shareManager].trackFlipx = YES;
+[self setupFaceUnity];
 ```
 
-3、初始化美颜工具条UI，并遵循代理  FUAPIDemoBarDelegate ，实现代理方法 `bottomDidChange:` 切换美颜 和 `filterValueChange` 更新美颜参数。
-可查看 `setupUI` demoBar布局
+### 三、部分代码介绍
 
-```objc
-/**faceU */
-FUAPIDemoBar *demoBar = [[FUAPIDemoBar alloc] init];
-demoBar.mDelegate = self;
-[self.view addSubview:demoBar];
-[demoBar mas_makeConstraints:^(MASConstraintMaker *make) {
-        
-        if (@available(iOS 11.0, *)) {
-            make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom)
-            .mas_offset(-60);
-            make.left.mas_equalTo(self.view.mas_safeAreaLayoutGuideLeft);
-            make.right.mas_equalTo(self.view.mas_safeAreaLayoutGuideRight);
-        } else {
-            make.left.right.mas_equalTo(0);
-            make.bottom.mas_equalTo(-60);
-        }
-        
-        make.height.mas_equalTo(194);
-    }];
-```
-
-#### 切换贴纸
+#### 底部栏切换功能：使用不同的ViewModel控制
 
 ```C
-// 切换贴纸
--(void)bottomDidChange:(int)index{
-    if (index < 3) {
-        [[FUManager shareManager] setRenderType:FUDataTypeBeautify];
+-(void)bottomDidChangeViewModel:(FUBaseViewModel *)viewModel {
+    if (viewModel.type == FUDataTypeBeauty || viewModel.type == FUDataTypebody) {
+        self.renderSwitch.hidden = NO;
+    } else {
+        self.renderSwitch.hidden = YES;
     }
-    if (index == 3) {
-        [[FUManager shareManager] setRenderType:FUDataTypeStrick];
-    }
+
+    [[FUManager shareManager].viewModelManager addToRenderLoop:viewModel];
     
-    if (index == 4) {
-        [[FUManager shareManager] setRenderType:FUDataTypeMakeup];
-    }
-    if (index == 5) {
-        [[FUManager shareManager] setRenderType:FUDataTypebody];
-    }
+    // 设置人脸数
+    [[FUManager shareManager].viewModelManager resetMaxFacesNumber:viewModel.type];
 }
 
 ```
@@ -98,15 +68,18 @@ demoBar.mDelegate = self;
 #### 更新美颜参数
 
 ```C
-// 更新美颜参数    
-- (void)filterValueChange:(FUBeautyParam *)param{
-    [[FUManager shareManager] filterValueChange:param];
+- (IBAction)filterSliderValueChange:(FUSlider *)sender {
+    _seletedParam.mValue = @(sender.value * _seletedParam.ratio);
+    /**
+     * 这里使用抽象接口，有具体子类决定去哪个业务员模块处理数据
+     */
+    [self.selectedView.viewModel consumerWithData:_seletedParam viewModelBlock:nil];
 }
 ```
 
 
 
-### 三、在 `enterRoom ` 方法中,进入房间之前设置本地视频的自定义渲染回调
+### 四、在 `enterRoom ` 方法中,进入房间之前设置本地视频的自定义渲染回调
 
 ```C
 NSDictionary *dict = @{
@@ -119,13 +92,32 @@ NSDictionary *dict = @{
 
 ```
 
-### 四、在本地视频的自定义渲染回调中,FaceUnity处理视频数据
+### 五、在本地视频的自定义渲染回调中，FaceUnity处理视频数据（FURenderInput输入和FURenderOutput输出）
 
 ```C
-- (void)onRenderVideoFrame:(TRTCVideoFrame *)frame userId:(NSString *)userId streamType:(TRTCVideoStreamType)streamType{
+- (uint32_t)onProcessVideoFrame:(TRTCVideoFrame *)srcFrame dstFrame:(TRTCVideoFrame *)dstFrame{
+    _mContext = [EAGLContext currentContext];
+    if ([FUGLContext shareGLContext].currentGLContext != _mContext) {
+        [[FUGLContext shareGLContext] setCustomGLContext: _mContext];
+    }
     
-    [[FUManager shareManager] renderItemsToPixelBuffer:frame.pixelBuffer];
-    
+    if ([FUManager shareManager].isRender) {
+        FURenderInput *input = [[FURenderInput alloc] init];
+        input.renderConfig.imageOrientation = FUImageOrientationUP;
+        input.renderConfig.isFromFrontCamera = self.isFrontCamera;
+        input.renderConfig.stickerFlipH = !self.isFrontCamera;
+        FUTexture tex = {srcFrame.textureId, CGSizeMake(srcFrame.width, srcFrame.height)};
+        input.texture = tex;
+        //开启重力感应，内部会自动计算正确方向，设置fuSetDefaultRotationMode，无须外面设置
+        input.renderConfig.gravityEnable = YES;
+        input.renderConfig.textureTransform = CCROT0_FLIPVERTICAL;
+        FURenderOutput *output = [[FURenderKit shareRenderKit] renderWithInput:input];
+        dstFrame.textureId = output.texture.ID;
+        if (output.texture.ID != 0) {
+            return output.texture.ID;;
+        }
+    }
+    return 0;
 }
 
 ```

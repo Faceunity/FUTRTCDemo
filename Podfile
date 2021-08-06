@@ -8,7 +8,7 @@ target 'TRTCSimpleDemo' do
   pod 'SVProgressHUD'
   pod 'Masonry'
   pod 'AFNetworking'
-  pod 'Nama', '~> 7.3.0'
+  #pod 'Nama', '~> 7.3.0'
   
   
   # Pods for TRTCSimpleDemo
