@@ -15,14 +15,12 @@ PODS:
   - AFNetworking/UIKit (4.0.1):
     - AFNetworking/NSURLSession
   - Masonry (1.1.0)
-  - Nama (7.3.0)
   - SVProgressHUD (2.2.5)
-  - TXLiteAVSDK_TRTC (8.3.9878)
+  - TXLiteAVSDK_TRTC (8.6.10094)
 
 DEPENDENCIES:
   - AFNetworking
   - Masonry
-  - Nama (~> 7.3.0)
   - SVProgressHUD
   - TXLiteAVSDK_TRTC
 
@@ -30,17 +28,15 @@ SPEC REPOS:
   trunk:
     - AFNetworking
     - Masonry
-    - Nama
     - SVProgressHUD
     - TXLiteAVSDK_TRTC
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  Nama: 3e494eab87352c613f4435ba62cc1116df43e04d
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  TXLiteAVSDK_TRTC: eb6357112a554b9b093ba45971afef8fc9c0308e
+  TXLiteAVSDK_TRTC: 2ac893645cde6ac353e5374d0b8fb08ec34f2fb8
 
-PODFILE CHECKSUM: 5eedccb36485f6faca00d02e39d70c829e6f77e3
+PODFILE CHECKSUM: 04c47e8b7064210bf9a5770c9a45796b1c9ff392
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1

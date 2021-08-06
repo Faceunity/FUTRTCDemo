@@ -5,35 +5,29 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
-            uuid = "8FD8AAEE-1767-48D1-938A-818507851433"
-            shouldBeEnabled = "No"
+            uuid = "C4084927-C2B4-4086-961A-81E988C57140"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "TRTCSimpleDemo/TRTC/TRTRCRoomViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "395"
-            endingLineNumber = "395"
-            landmarkName = "-onExitRoom:"
-            landmarkType = "7">
+            breakpointStackSelectionBehavior = "1"
+            scope = "1"
+            stopOnStyle = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "36D03F04-18ED-426B-8271-6535D75DC676"
-            shouldBeEnabled = "No"
+            uuid = "8D211DA7-045F-48A5-B31A-64240513075B"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "TRTCSimpleDemo/TRTC/TRTRCRoomViewController.m"
+            filePath = "TRTCSimpleDemo/FaceUnity/FUManager.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "389"
-            endingLineNumber = "389"
-            landmarkName = "-onError:errMsg:extInfo:"
-            landmarkType = "7">
+            startingLineNumber = "485"
+            endingLineNumber = "485">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

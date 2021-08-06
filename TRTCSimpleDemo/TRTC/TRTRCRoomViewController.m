@@ -15,19 +15,16 @@
 
 /**faceU */
 #import "FUManager.h"
-#import "FUAPIDemoBar.h"
 
-#import "FUTestRecorder.h"
+#import "UIViewController+FaceUnityUIExtension.h"
+#import <FURenderKit/FUGLContext.h>
 
-@interface TRTRCRoomViewController ()<TRTCCloudDelegate,TRTCVideoRenderDelegate,TRTCVideoFrameDelegate,FUAPIDemoBarDelegate>
+@interface TRTRCRoomViewController ()<TRTCCloudDelegate,TRTCVideoRenderDelegate,TRTCVideoFrameDelegate>
 
 @property (nonatomic, retain) TRTCCloud *trtc;       //TRTC SDK 实例对象
 @property (nonatomic, retain) UIView* localView;     //本地画面的view
 @property(nonatomic, strong) UIView *remoteView;      // 远端画面view
 @property(nonatomic, assign) BOOL isFrontCamera;      // 前后摄像头标志
-
-/**faceU */
-@property (nonatomic, strong) FUAPIDemoBar *demoBar;   // demoBar
 
 // 使用纹理渲染时,记录当前glcontext
 @property(nonatomic, strong) EAGLContext *mContext;
@@ -49,10 +46,11 @@
 //
     //buffer 渲染时 setLocalVideoRenderDelegate
     //在调用fusetup初始化时,shouldCreateContext:YES
-     [[FUManager shareManager] destoryItems];
+    [[FUManager shareManager] destoryItems];
     
     [TRTCCloud destroySharedIntance];
     //NSLog(@"%s",__func__);
+    
     
 }
 
@@ -88,17 +86,25 @@
     
     [self setupTRTC];
     [self setupUI];
+    [self setupFaceUnity];
     [self enterRoom];
     
-    /**faceU */
-    [[FUManager shareManager] loadFilter];
-    [FUManager shareManager].isRender = YES;
-    [FUManager shareManager].flipx = YES;
-    [FUManager shareManager].trackFlipx = YES;
-
-    // 测试时使用写入csv文件查看性能
-    [[FUTestRecorder shareRecorder] setupRecord];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
     
+}
+
+- (void)applicationWillResignActive {
+    if (@available(iOS 11.0, *)) {
+        [self.trtc pauseScreenCapture];
+    } else {
+        // Fallback on earlier versions
+    }
+    
+    // [self.trtc stopPublishing];
+}
+- (void)applicationDidBecomeActive {
+    // self.trtc startPublishing: type:<#(TRTCVideoStreamType)#>
 }
 
 /// 初始化引擎
@@ -109,7 +115,6 @@
     
     /// 调整仪表盘显示位置
     [self.trtc setDebugViewMargin:self.userId margin:UIEdgeInsetsMake(80, 0, 0, 0)];
-    
 }
 
 
@@ -144,15 +149,15 @@
     [self.trtc setVideoEncoderParam:videoEncParam];
     
     // 使用纹理渲染的话,可不调用 callExperimentalAPI
-    NSDictionary *dict = @{
-                            @"api" : @"setCustomRenderMode",
-                            @"params" : @{@"mode" : @(1)}
-                           };
-
-    [self.trtc callExperimentalAPI:[NSString convertToJsonData:dict]];
-    [self.trtc setLocalVideoRenderDelegate:self pixelFormat:(TRTCVideoPixelFormat_NV12) bufferType:(TRTCVideoBufferType_PixelBuffer)];
-    
-//    [self.trtc setLocalVideoProcessDelegete:self pixelFormat:(TRTCVideoPixelFormat_Texture_2D) bufferType:(TRTCVideoBufferType_Texture)];
+//    NSDictionary *dict = @{
+//                            @"api" : @"setCustomRenderMode",
+//                            @"params" : @{@"mode" : @(1)}
+//                           };
+//#erroring 下面两个走的是pixelbuffer代理
+//    [self.trtc callExperimentalAPI:[NSString convertToJsonData:dict]];
+//    [self.trtc setLocalVideoRenderDelegate:self pixelFormat:(TRTCVideoPixelFormat_NV12) bufferType:(TRTCVideoBufferType_PixelBuffer)];
+//#erroring 这个走的是纹理代理
+    [self.trtc setLocalVideoProcessDelegete:self pixelFormat:(TRTCVideoPixelFormat_Texture_2D) bufferType:(TRTCVideoBufferType_Texture)];
     
     [self.trtc setGSensorMode:(TRTCGSensorMode_Disable)];
     [self.trtc startLocalAudio:(TRTCAudioQualityDefault)];
@@ -277,25 +282,6 @@
         make.size.mas_equalTo(CGSizeMake(40, 40));
         
     }];
-
-    /**faceU */
-    FUAPIDemoBar *demoBar = [[FUAPIDemoBar alloc] init];
-    demoBar.mDelegate = self;
-    [self.view addSubview:demoBar];
-    [demoBar mas_makeConstraints:^(MASConstraintMaker *make) {
-        
-        if (@available(iOS 11.0, *)) {
-            make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom)
-            .mas_offset(-60);
-            make.left.mas_equalTo(self.view.mas_safeAreaLayoutGuideLeft);
-            make.right.mas_equalTo(self.view.mas_safeAreaLayoutGuideRight);
-        } else {
-            make.left.right.mas_equalTo(0);
-            make.bottom.mas_equalTo(-60);
-        }
-        
-        make.height.mas_equalTo(194);
-    }];
     
     // 按钮事件
     [switchCameraBtn addTarget:self action:@selector(onSwitchCameraClicked:) forControlEvents:(UIControlEventTouchUpInside)];
@@ -305,7 +291,6 @@
     [openCloseCameraBtn addTarget:self action:@selector(onVideoCaptureClicked:) forControlEvents:(UIControlEventTouchUpInside)];
     
     [debugBtn addTarget:self action:@selector(onDashboardClicked:) forControlEvents:(UIControlEventTouchUpInside)];
-    
 }
 
 
@@ -396,45 +381,94 @@
 }
 
 
-#pragma mark ---------FUAPIDemoBarDelegate------
-
--(void)filterValueChange:(FUBeautyParam *)param{
-
-    [[FUManager shareManager] filterValueChange:param];
-}
-
--(void)switchRenderState:(BOOL)state{
-
-    [FUManager shareManager].isRender = state;
-    
-}
-
--(void)bottomDidChange:(int)index{
-   
-    if (index < 3) {
-        [[FUManager shareManager] setRenderType:FUDataTypeBeautify];
-    }
-    if (index == 3) {
-        [[FUManager shareManager] setRenderType:FUDataTypeStrick];
-    }
-    
-    if (index == 4) {
-        [[FUManager shareManager] setRenderType:FUDataTypeMakeup];
-    }
-    if (index == 5) {
-        [[FUManager shareManager] setRenderType:FUDataTypebody];
-    }
-}
-
-
 //#pragma mark - TRTCVideoRenderDelegate
 //
 - (void)onRenderVideoFrame:(TRTCVideoFrame *)frame userId:(NSString *)userId streamType:(TRTCVideoStreamType)streamType{
-
-    [[FUTestRecorder shareRecorder] processFrameWithLog];
+    
     CVPixelBufferRef pixelBuffer = frame.pixelBuffer;
-    [[FUManager shareManager] renderItemsToPixelBuffer:pixelBuffer];
+    
+    FURenderInput *input = [[FURenderInput alloc] init];
+    input.renderConfig.imageOrientation = FUImageOrientationUP;
+    input.renderConfig.isFromFrontCamera = [[self.trtc getDeviceManager] isFrontCamera];
+    input.pixelBuffer = frame.pixelBuffer;
+    //开启重力感应，内部会自动计算正确方向，设置fuSetDefaultRotationMode，无须外面设置
+    input.renderConfig.gravityEnable = YES;
+    FURenderOutput *output = [[FURenderKit shareRenderKit] renderWithInput:input];
+    
+    CVPixelBufferRef resultBuffer = output.pixelBuffer;
 
+    if (frame.pixelFormat == TRTCVideoPixelFormat_NV12) {
+        [self NV12PixelBufferCopySrcBuffer:resultBuffer desPixelBuffer:pixelBuffer];
+    } else if (frame.pixelFormat == TRTCVideoPixelFormat_32BGRA) {
+        [self rgbPixelBufferCopySrcBuffer:resultBuffer desPixelBuffer:pixelBuffer];
+    } else {}
+    
+}
+
+- (void)NV12PixelBufferCopySrcBuffer:(CVPixelBufferRef)srcPixelBuffer desPixelBuffer:(CVPixelBufferRef)desPixelBuffer {
+    CVPixelBufferLockBaseAddress(srcPixelBuffer, 0);
+    CVPixelBufferLockBaseAddress(desPixelBuffer, 0);
+    void *desStrdeY = CVPixelBufferGetBaseAddressOfPlane(desPixelBuffer, 0);
+    void *desStrdeUV = CVPixelBufferGetBaseAddressOfPlane(desPixelBuffer, 1);
+    
+    //使用实际宽度而不是 stride
+//    size_t desStrideY_size = CVPixelBufferGetBytesPerRowOfPlane(desPixelBuffer, 0);
+//    size_t desStrideUV_size = CVPixelBufferGetBytesPerRowOfPlane(desPixelBuffer, 1);
+
+    void *srcStrdeY = CVPixelBufferGetBaseAddressOfPlane(srcPixelBuffer, 0);
+    void *srcStrdeUV = CVPixelBufferGetBaseAddressOfPlane(srcPixelBuffer, 1);
+    //使用实际宽度而不是 stride
+//    size_t srcStrideY_size = CVPixelBufferGetBytesPerRowOfPlane(srcPixelBuffer, 0);
+//    size_t srcStrideUV_size = CVPixelBufferGetBytesPerRowOfPlane(srcPixelBuffer, 1);
+
+    size_t desWidth = CVPixelBufferGetWidth(desPixelBuffer);
+//    size_t desHeight = CVPixelBufferGetHeight(desPixelBuffer);
+    
+    size_t srcWidth = CVPixelBufferGetWidth(srcPixelBuffer);
+    size_t srcHeight = CVPixelBufferGetHeight(srcPixelBuffer);
+    
+    size_t w_nv21 = ((srcWidth + 3) >> 2);
+    size_t h_uv = ((srcHeight + 1) >> 1);
+
+    //desStrideY 清零
+//    memset(desStrdeY, 0, desStrideY_size);
+    for (size_t i = 0; i < srcHeight; i ++) {
+        //stride0 copy
+        memcpy(desStrdeY + desWidth * i, srcStrdeY + (w_nv21 * 4) * i, srcWidth);
+    }
+    
+    //desStrideUV 清零
+//    memset(desStrdeUV, 0, desStrideUV_size);
+    size_t des_w_uv = 2 * ((desWidth + 1) >> 1);
+    size_t src_w_uv = 2 * ((srcWidth + 1) >> 1);
+    for (int i = 0; i < h_uv; i ++) {
+        memcpy(desStrdeUV + i * des_w_uv, srcStrdeUV + i * w_nv21 * 4, src_w_uv);
+    }
+    CVPixelBufferUnlockBaseAddress(desPixelBuffer, 0);
+    CVPixelBufferUnlockBaseAddress(srcPixelBuffer, 0);
+}
+
+
+- (void)rgbPixelBufferCopySrcBuffer:(CVPixelBufferRef)srcPixelBuffer desPixelBuffer:(CVPixelBufferRef)desPixelBuffer {
+    CVPixelBufferLockBaseAddress(srcPixelBuffer, 0);
+    CVPixelBufferLockBaseAddress(desPixelBuffer, 0);
+    
+    void *srcBufferAddress = CVPixelBufferGetBaseAddress(srcPixelBuffer);
+    size_t srcStride = CVPixelBufferGetBytesPerRow(srcPixelBuffer);
+//    size_t srcWidth = CVPixelBufferGetWidth(srcPixelBuffer);
+    size_t srcHeight = CVPixelBufferGetHeight(srcPixelBuffer);
+    
+    void *desBufferAddress = CVPixelBufferGetBaseAddress(desPixelBuffer);
+    size_t desStride = CVPixelBufferGetBytesPerRow(desPixelBuffer);
+//    size_t width = CVPixelBufferGetWidth(desPixelBuffer);
+//    size_t desStride = width * 4;
+//    size_t desHeight = CVPixelBufferGetHeight(desPixelBuffer);
+    for (int i = 0; i < srcHeight; i ++) {
+        memcpy(desBufferAddress + i * desStride, srcBufferAddress + i * srcStride , desStride);
+    }
+    
+    CVPixelBufferUnlockBaseAddress(desPixelBuffer, 0);
+    CVPixelBufferUnlockBaseAddress(srcPixelBuffer, 0);
 }
 
 
@@ -442,9 +476,26 @@
 
 - (uint32_t)onProcessVideoFrame:(TRTCVideoFrame *)srcFrame dstFrame:(TRTCVideoFrame *)dstFrame{
     _mContext = [EAGLContext currentContext];
+    if ([FUGLContext shareGLContext].currentGLContext != _mContext) {
+        [[FUGLContext shareGLContext] setCustomGLContext: _mContext];
+    }
     
-    [[FUTestRecorder shareRecorder] processFrameWithLog];
-    dstFrame.textureId = [[FUManager shareManager] renderItemWithTexture:srcFrame.textureId Width:srcFrame.width Height:srcFrame.height];
+    if ([FUManager shareManager].isRender) {
+        FURenderInput *input = [[FURenderInput alloc] init];
+        input.renderConfig.imageOrientation = FUImageOrientationUP;
+        input.renderConfig.isFromFrontCamera = self.isFrontCamera;
+        input.renderConfig.stickerFlipH = !self.isFrontCamera;
+        FUTexture tex = {srcFrame.textureId, CGSizeMake(srcFrame.width, srcFrame.height)};
+        input.texture = tex;
+        //开启重力感应，内部会自动计算正确方向，设置fuSetDefaultRotationMode，无须外面设置
+        input.renderConfig.gravityEnable = YES;
+        input.renderConfig.textureTransform = CCROT0_FLIPVERTICAL;
+        FURenderOutput *output = [[FURenderKit shareRenderKit] renderWithInput:input];
+        dstFrame.textureId = output.texture.ID;
+        if (output.texture.ID != 0) {
+            return output.texture.ID;;
+        }
+    }
     return 0;
 }
 
