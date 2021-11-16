@@ -14,9 +14,9 @@
 #import <Masonry/Masonry.h>
 
 /**faceU */
-#import "FUManager.h"
+#import "FUDemoManager.h"
+#import "FUTestRecorder.h"
 
-#import "UIViewController+FaceUnityUIExtension.h"
 #import <FURenderKit/FUGLContext.h>
 
 @interface TRTRCRoomViewController ()<TRTCCloudDelegate,TRTCVideoRenderDelegate,TRTCVideoFrameDelegate>
@@ -86,7 +86,13 @@
     
     [self setupTRTC];
     [self setupUI];
-    [self setupFaceUnity];
+    
+    
+    CGFloat safeAreaBottom = 0;
+    if (@available(iOS 11.0, *)) {
+        safeAreaBottom = [UIApplication sharedApplication].delegate.window.safeAreaInsets.bottom;
+    }
+    [FUDemoManager setupFaceUnityDemoInController:self originY:CGRectGetHeight(self.view.frame) - FUBottomBarHeight - safeAreaBottom - 60];
     [self enterRoom];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
@@ -481,6 +487,8 @@
     }
     
     if ([FUManager shareManager].isRender) {
+        [[FUTestRecorder shareRecorder] processFrameWithLog];
+        [[FUManager shareManager] updateBeautyBlurEffect];
         FURenderInput *input = [[FURenderInput alloc] init];
         input.renderConfig.imageOrientation = FUImageOrientationUP;
         input.renderConfig.isFromFrontCamera = self.isFrontCamera;
