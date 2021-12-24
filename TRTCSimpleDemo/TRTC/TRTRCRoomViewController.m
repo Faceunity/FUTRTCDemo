@@ -490,12 +490,18 @@
         [[FUTestRecorder shareRecorder] processFrameWithLog];
         [[FUManager shareManager] updateBeautyBlurEffect];
         FURenderInput *input = [[FURenderInput alloc] init];
-        input.renderConfig.imageOrientation = FUImageOrientationUP;
+        
+        // 根据输入纹理调整参数设置
+        input.renderConfig.imageOrientation = FUImageOrientationDown;
         input.renderConfig.isFromFrontCamera = self.isFrontCamera;
+        input.renderConfig.isFromMirroredCamera = YES;
+        // stickerFlipH和stickerFlipV尽量不要使用，后续将不再维护，这里使用是为了适配老道具
         input.renderConfig.stickerFlipH = !self.isFrontCamera;
+        input.renderConfig.stickerFlipV = NO;
+        
         FUTexture tex = {srcFrame.textureId, CGSizeMake(srcFrame.width, srcFrame.height)};
         input.texture = tex;
-        //开启重力感应，内部会自动计算正确方向，设置fuSetDefaultRotationMode，无须外面设置
+        // 开启重力感应，内部会自动计算正确方向，设置fuSetDefaultRotationMode，无须外面设置
         input.renderConfig.gravityEnable = YES;
         input.renderConfig.textureTransform = CCROT0_FLIPVERTICAL;
         FURenderOutput *output = [[FURenderKit shareRenderKit] renderWithInput:input];

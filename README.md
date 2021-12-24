@@ -18,11 +18,8 @@ FUTRTCDemo 是集成了 [Faceunity](https://github.com/Faceunity/FULiveDemo/tree
 
 ### FaceUnity 模块简介
 ```C
--FUManager              //nama 业务类
--FUCamera               //视频采集类(示例程序未用到)    
--authpack.h             //权限文件
-+FUAPIDemoBar     //美颜工具条,可自定义
-+items       //贴纸和美妆资源 xx.bundel文件
++Lib              //FURenderKit动态库、鉴权文件和文件资源
++Demo             //集成实例demo
       
 ```
 
@@ -33,53 +30,20 @@ FUTRTCDemo 是集成了 [Faceunity](https://github.com/Faceunity/FULiveDemo/tree
 
 ```objc
 /**faceU */
-#import "UIViewController+FaceUnityUIExtension.h"
+#import "FUDemoManager.h"
+
 #import <FURenderKit/FUGLContext.h>
 
 // 使用纹理渲染时,记录当前glcontext
 @property(nonatomic, strong) EAGLContext *mContext;
 ```
-2、在 `viewDidLoad` 中初始化 FaceUnity的界面和 SDK，FaceUnity界面工具和SDK都放在UIViewController+FaceUnityUIExtension中初始化了，也可以自行调用FUAPIDemoBar和FUManager初始化
+2、在 `viewDidLoad` 中初始化 FaceUnity的界面和 SDK
 
 ```objc
-[self setupFaceUnity];
+    [FUDemoManager setupFaceUnityDemoInController:self originY:CGRectGetHeight(self.view.frame) - FUBottomBarHeight - safeAreaBottom - 60];
 ```
 
-### 三、部分代码介绍
-
-#### 底部栏切换功能：使用不同的ViewModel控制
-
-```C
--(void)bottomDidChangeViewModel:(FUBaseViewModel *)viewModel {
-    if (viewModel.type == FUDataTypeBeauty || viewModel.type == FUDataTypebody) {
-        self.renderSwitch.hidden = NO;
-    } else {
-        self.renderSwitch.hidden = YES;
-    }
-
-    [[FUManager shareManager].viewModelManager addToRenderLoop:viewModel];
-    
-    // 设置人脸数
-    [[FUManager shareManager].viewModelManager resetMaxFacesNumber:viewModel.type];
-}
-
-```
-
-#### 更新美颜参数
-
-```C
-- (IBAction)filterSliderValueChange:(FUSlider *)sender {
-    _seletedParam.mValue = @(sender.value * _seletedParam.ratio);
-    /**
-     * 这里使用抽象接口，有具体子类决定去哪个业务员模块处理数据
-     */
-    [self.selectedView.viewModel consumerWithData:_seletedParam viewModelBlock:nil];
-}
-```
-
-
-
-### 四、在 `enterRoom ` 方法中,进入房间之前设置本地视频的自定义渲染回调
+### 三、在 `enterRoom ` 方法中,进入房间之前设置本地视频的自定义渲染回调
 
 ```C
 NSDictionary *dict = @{
@@ -92,7 +56,7 @@ NSDictionary *dict = @{
 
 ```
 
-### 五、在本地视频的自定义渲染回调中，FaceUnity处理视频数据（FURenderInput输入和FURenderOutput输出）
+### 四、在本地视频的自定义渲染回调中，FaceUnity处理视频数据（FURenderInput输入和FURenderOutput输出）
 
 ```C
 - (uint32_t)onProcessVideoFrame:(TRTCVideoFrame *)srcFrame dstFrame:(TRTCVideoFrame *)dstFrame{
@@ -102,13 +66,21 @@ NSDictionary *dict = @{
     }
     
     if ([FUManager shareManager].isRender) {
+        [[FUTestRecorder shareRecorder] processFrameWithLog];
+        [[FUManager shareManager] updateBeautyBlurEffect];
         FURenderInput *input = [[FURenderInput alloc] init];
-        input.renderConfig.imageOrientation = FUImageOrientationUP;
+        
+        // 根据输入纹理调整参数设置
+        input.renderConfig.imageOrientation = FUImageOrientationDown;
         input.renderConfig.isFromFrontCamera = self.isFrontCamera;
+        input.renderConfig.isFromMirroredCamera = YES;
+        // stickerFlipH和stickerFlipV尽量不要使用，后续将不再维护，这里使用是为了适配老道具
         input.renderConfig.stickerFlipH = !self.isFrontCamera;
+        input.renderConfig.stickerFlipV = NO;
+        
         FUTexture tex = {srcFrame.textureId, CGSizeMake(srcFrame.width, srcFrame.height)};
         input.texture = tex;
-        //开启重力感应，内部会自动计算正确方向，设置fuSetDefaultRotationMode，无须外面设置
+        // 开启重力感应，内部会自动计算正确方向，设置fuSetDefaultRotationMode，无须外面设置
         input.renderConfig.gravityEnable = YES;
         input.renderConfig.textureTransform = CCROT0_FLIPVERTICAL;
         FURenderOutput *output = [[FURenderKit shareRenderKit] renderWithInput:input];
