@@ -160,12 +160,12 @@
 		BD7ACBB68CE2CD7085D72323 /* libPods-TRTCSimpleDemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TRTCSimpleDemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32D4DA22638187300E6C1C2 /* authpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = authpack.h; sourceTree = "<group>"; };
 		E32D4E0D26382A9100E6C1C2 /* ai_human_processor_mb_fast.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_human_processor_mb_fast.bundle; sourceTree = "<group>"; };
-		E32D4E0E26382A9100E6C1C2 /* ai_hand_processor.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_hand_processor.bundle; sourceTree = "<group>"; };
+		E32D4E0E26382A9100E6C1C2 /* ai_hand_processor.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ai_hand_processor.bundle; sourceTree = "<group>"; };
 		E32D4E0F26382A9100E6C1C2 /* ai_face_processor.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_face_processor.bundle; sourceTree = "<group>"; };
 		E32D4E1026382A9100E6C1C2 /* ai_bgseg_green.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_bgseg_green.bundle; sourceTree = "<group>"; };
 		E32D4E1126382A9100E6C1C2 /* ai_face_processor_lite.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_face_processor_lite.bundle; sourceTree = "<group>"; };
 		E32D4E1226382A9100E6C1C2 /* ai_hairseg.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_hairseg.bundle; sourceTree = "<group>"; };
-		E32D4E1326382A9100E6C1C2 /* ai_human_processor.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ai_human_processor.bundle; sourceTree = "<group>"; };
+		E32D4E1326382A9100E6C1C2 /* ai_human_processor.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ai_human_processor.bundle; sourceTree = "<group>"; };
 		E32D4E1526382A9100E6C1C2 /* tongue.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = tongue.bundle; sourceTree = "<group>"; };
 		E32D4E1626382A9100E6C1C2 /* fxaa.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = fxaa.bundle; sourceTree = "<group>"; };
 		E32D4E1726382A9100E6C1C2 /* face_makeup.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = face_makeup.bundle; sourceTree = "<group>"; };
