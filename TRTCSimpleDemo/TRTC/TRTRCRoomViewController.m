@@ -29,6 +29,8 @@
 // 使用纹理渲染时,记录当前glcontext
 @property(nonatomic, strong) EAGLContext *mContext;
 
+@property (nonatomic, strong) FUDemoManager *demoManager;
+
 @end
 
 
@@ -92,7 +94,9 @@
     if (@available(iOS 11.0, *)) {
         safeAreaBottom = [UIApplication sharedApplication].delegate.window.safeAreaInsets.bottom;
     }
-    [FUDemoManager setupFaceUnityDemoInController:self originY:CGRectGetHeight(self.view.frame) - FUBottomBarHeight - safeAreaBottom - 60];
+    
+    self.demoManager = [[FUDemoManager alloc] initWithTargetController:self originY:CGRectGetHeight(self.view.frame) - FUBottomBarHeight - safeAreaBottom - 60];
+    
     [self enterRoom];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
