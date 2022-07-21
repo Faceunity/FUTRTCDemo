@@ -24,6 +24,8 @@
 
 @property (nonatomic, assign) BOOL isRender;
 
+@property (nonatomic, assign, readonly) FUDevicePerformanceLevel devicePerformanceLevel;
+
 + (FUManager *)shareManager;
 
 /// 销毁全部道具
