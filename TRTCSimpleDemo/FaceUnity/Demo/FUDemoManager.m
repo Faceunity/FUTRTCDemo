@@ -264,10 +264,11 @@
     }
     FUViewModel *viewModel = functionView.viewModel;
     viewModel.selectedIndex = index;
-    [viewModel updateData:viewModel.model.moduleData[index]];
+ 
     if (!viewModel.isRendering) {
         [viewModel startRender];
     }
+    [viewModel updateData:viewModel.model.moduleData[index]];
 }
 
 - (void)functionView:(FUFunctionView *)functionView didChangeSliderValue:(CGFloat)value {
