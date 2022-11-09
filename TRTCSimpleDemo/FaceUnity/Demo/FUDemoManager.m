@@ -19,7 +19,7 @@
 
 #import "FUSegmentBar.h"
 
-@interface FUDemoManager ()<FUFunctionViewDelegate, FUManagerProtocol, FUSegmentBarDelegate>
+@interface FUDemoManager ()<FUFunctionViewDelegate, FUSegmentBarDelegate>
 
 /// 底部功能选择栏
 @property (nonatomic, strong) FUSegmentBar *bottomBar;
@@ -145,6 +145,8 @@
         // 保存显示的类型
         self.showingModuleType = item;
         
+        [FUAIKit shareKit].maxTrackFaces = self.viewModels[item].model.type == FUModuleTypeBeautyBody ? 1 : 4;
+        
         if (self.viewModels[item].model.type == FUModuleTypeBeautySkin || self.viewModels[item].model.type == FUModuleTypeBeautyShape || self.viewModels[item].model.type == FUModuleTypeBeautyBody) {
             // 显示效果开关
             self.renderSwitch.hidden = NO;
@@ -264,7 +266,6 @@
     }
     FUViewModel *viewModel = functionView.viewModel;
     viewModel.selectedIndex = index;
- 
     if (!viewModel.isRendering) {
         [viewModel startRender];
     }
@@ -329,7 +330,7 @@
             [segments addObject:viewModel.model.name];
         }
         _bottomBar = [[FUSegmentBar alloc] initWithFrame:CGRectMake(0, self.demoOriginY, CGRectGetWidth(self.targetController.view.bounds), 49) titles:[segments copy] configuration:[FUSegmentBarConfigurations new]];
-        _bottomBar.segmentDelegate = self;
+        _bottomBar.delegate = self;
     }
     return _bottomBar;
 }

@@ -110,6 +110,10 @@ static NSString * const kFUBeautyCellIdentifierKey = @"FUBeautyCellIdentifier";
     if (subModel.disabled) {
         NSString *tipString = [NSString stringWithFormat:NSLocalizedString(@"该功能只支持在高端机使用", nil), NSLocalizedString(subModel.title, nil)];
         [FUTipHUD showTips:tipString dismissWithDelay:1];
+        [self.collectionView reloadData];
+        if (self.viewModel.selectedIndex >= 0) {
+            [self.collectionView selectItemAtIndexPath:[NSIndexPath indexPathForItem:self.viewModel.selectedIndex inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+        }
         return NO;
     }
     return YES;
@@ -192,10 +196,12 @@ static NSString * const kFUBeautyCellIdentifierKey = @"FUBeautyCellIdentifier";
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
     if (self.subModel.disabled) {
-        self.fuImageView.image = [UIImage imageNamed:[self.subModel.imageName stringByAppendingString:@"-0"]];
         self.fuImageView.alpha = 0.7;
         self.fuTitleLabel.alpha = 0.7;
+        self.fuImageView.image = [UIImage imageNamed:[self.subModel.imageName stringByAppendingString:@"-0"]];
     } else {
+        self.fuImageView.alpha = 1;
+        self.fuTitleLabel.alpha = 1;
         BOOL changed = NO;
         if (self.subModel.isBidirection) {
             changed = fabs(self.subModel.currentValue - 0.5) > 0.01;

@@ -135,12 +135,45 @@
                     model.isBidirection = YES;
                 }
                     break;
+                case FUBeautyShapeItemLipThick:{
+                    model.title = FULocalizedString(@"嘴唇厚度");
+                    model.imageName = @"嘴唇厚度";
+                    model.currentValue = 0.5;
+                    model.defaultValue = 0.5;
+                    model.ratio = 1.0;
+                    model.isBidirection = YES;
+                    // 低性能手机禁用嘴唇厚度
+                    model.disabled = [FUManager shareManager].devicePerformanceLevel != FUDevicePerformanceLevelHigh;
+                }
+                    break;
+                case FUBeautyShapeItemEyeHeight:{
+                    model.title = FULocalizedString(@"眼睛位置");
+                    model.imageName = @"眼睛位置";
+                    model.currentValue = 0.5;
+                    model.defaultValue = 0.5;
+                    model.ratio = 1.0;
+                    model.isBidirection = YES;
+                    // 低性能手机禁用眼睛位置
+                    model.disabled = [FUManager shareManager].devicePerformanceLevel != FUDevicePerformanceLevelHigh;
+                }
+                    break;
                 case FUBeautyShapeItemCanthus:{
                     model.title = FULocalizedString(@"开眼角");
                     model.imageName = @"开眼角";
                     model.currentValue = 0.0;
                     model.defaultValue = 0.0;
                     model.ratio = 1.0;
+                }
+                    break;
+                case FUBeautyShapeItemEyeLid:{
+                    model.title = FULocalizedString(@"眼睑下至");
+                    model.imageName = @"眼睑下至";
+                    model.currentValue = 0.0;
+                    model.defaultValue = 0.0;
+                    model.ratio = 1.0;
+                    model.isBidirection = NO;
+                    // 低性能手机禁用眼睑下至
+                    model.disabled = [FUManager shareManager].devicePerformanceLevel != FUDevicePerformanceLevelHigh;
                 }
                     break;
                 case FUBeautyShapeItemEyeSpace:{
@@ -206,6 +239,17 @@
                     model.ratio = 1.0;
                     model.isBidirection = YES;
                     // 低性能手机禁用眉间距
+                    model.disabled = [FUManager shareManager].devicePerformanceLevel != FUDevicePerformanceLevelHigh;
+                }
+                    break;
+                case FUBeautyShapeItemBrowThick:{
+                    model.title = FULocalizedString(@"眉毛粗细");
+                    model.imageName = @"眉毛粗细";
+                    model.currentValue = 0.5;
+                    model.defaultValue = 0.5;
+                    model.ratio = 1.0;
+                    model.isBidirection = YES;
+                    // 低性能手机禁用眉毛粗细
                     model.disabled = [FUManager shareManager].devicePerformanceLevel != FUDevicePerformanceLevelHigh;
                 }
                     break;

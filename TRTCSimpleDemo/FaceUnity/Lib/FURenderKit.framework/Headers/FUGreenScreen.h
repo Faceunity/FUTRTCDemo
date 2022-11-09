@@ -10,63 +10,53 @@
 NS_ASSUME_NONNULL_BEGIN
 @interface FUGreenScreen : FUItem
 
-@property (nonatomic, strong) UIImage *backgroundImage; // 背景图片
+/// 背景图片
+@property (nonatomic, strong) UIImage *backgroundImage;
 
-@property (nonatomic, strong, nullable) UIImage *safeAreaImage; // 安全区域图片
+/// 背景视频URLString
+/// @note 设置之后自动开始播放，若设置为nil，自动停止
+@property (nonatomic, copy, nullable) NSString *videoPath;
 
-@property (nonatomic, copy, nullable) NSString *videoPath; // 背景视频
+/// 安全区域图片
+@property (nonatomic, strong, nullable) UIImage *safeAreaImage;
 
-/**
- * 根据传入的图进和点位进行取色，获取到的颜色需要生效直接设置 self.keyColor
- */
-+ (UIColor *)pixelColorWithImage:(UIImage *)originImage point:(CGPoint)point;
+/// 关键颜色
+/// 默认值为[0,255,0]，取值范围[0-255,0-255,0-255]
+@property (nonatomic, assign) FUColor keyColor;
 
-/**
- * 根据传入的CVPixelBufferRef和点位进行取色
- */
-+ (UIColor *)pixelColorWithPixelBuffer:(CVPixelBufferRef)buffer point:(CGPoint)point;
+/// 相似度：色度最大容差
+/// 取值范围0.0-1.0，色度最大，容差值越大，更多幕景被抠除
+/// @note 值跟随关键颜色变化
+@property (nonatomic, assign) double chromaThres;
 
-/**
- * 开始视频播放
- */
-- (void)startVideoDecode;
+/// 平滑度：色度最小限差，
+/// 取值范围0.0-1.0，值越大，更多幕景被扣除
+/// @note 值跟随关键颜色变化
+@property (nonatomic, assign) double chromaThrest;
 
-/**
- * 取消视频播放
- */
-- (void)stopVideoDecode;
+/// 祛色度：图像前后景祛色度过度
+/// 取值范围0.0-1.0，值越大，两者边缘处透明过度更平滑
+/// @note 值跟随关键颜色变化
+@property (nonatomic, assign) double alphal;
 
+/// 中心点
+@property (nonatomic, assign) CGPoint center;
 
-///**
-//  * 滑动手势的在View上的点
-// */
-//- (void)handlePanGestureRecognizer:(CGPoint)point;
-//
-//
-///**
-// * 捏合手势的scale, 内部处理之后外面调用层需要把捏合手势对象的scale设置1
-// */
-//- (void)handlePinchGesture:(CGFloat)scale;
-
-@property (nonatomic, assign) FUColor keyColor; //默认值为[0,255,0],取值范围[0-255,0-255,0-255],选取的颜色RGB,默认绿色可根据实际颜色进行调整
-@property (nonatomic, assign) double chromaThres; //默认值为0.518,取值范围0.0-1.0，相似度：色度最大容差，色度最大容差值越大，更多幕景被抠除
-@property (nonatomic, assign) double chromaThrest; //默认值为0.22,取值范围0.0-1.0，平滑度：色度最小限差，值越大，更多幕景被扣除
-@property (nonatomic, assign) double alphal; //默认值为0.0,取值范围0.0-1.0，祛色度：图像前后景祛色度过度，值越大，两者边缘处透明过度更平滑
-
-@property (nonatomic, assign) CGPoint center; //包含start_x和start_y
+/// 缩放比例
 @property (nonatomic, assign) float scale;
 
-@property (nonatomic, assign) int isBgra; //internal
-
-//@property (nonatomic, strong) UIImage *bgImage;
-
-/**
- * 当前是否正在进行抠图,抠图就停止绿慕渲染
- */
+/// 当前是否正在进行抠图，抠图就停止绿慕渲染
 @property (nonatomic, assign) BOOL cutouting;
 
-
+/// 背景视频播放是否暂停
 @property (nonatomic, assign) BOOL pause;
+
+/// 开始播放背景视频
+- (void)startVideoDecode;
+
+/// 取消播放背景视频
+- (void)stopVideoDecode;
+
 @end
 
 

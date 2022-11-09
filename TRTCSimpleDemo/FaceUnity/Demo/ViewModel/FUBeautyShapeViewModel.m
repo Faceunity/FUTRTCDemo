@@ -102,8 +102,17 @@
         case FUBeautyShapeItemMouth:
             self.beauty.intensityMouth = subModel.currentValue;
             break;
+        case FUBeautyShapeItemLipThick:
+            self.beauty.intensityLipThick = subModel.currentValue;
+            break;
+        case FUBeautyShapeItemEyeHeight:
+            self.beauty.intensityEyeHeight = subModel.currentValue;
+            break;
         case FUBeautyShapeItemCanthus:
             self.beauty.intensityCanthus = subModel.currentValue;
+            break;
+        case FUBeautyShapeItemEyeLid:
+            self.beauty.intensityEyeLid = subModel.currentValue;
             break;
         case FUBeautyShapeItemEyeSpace:
             self.beauty.intensityEyeSpace = subModel.currentValue;
@@ -125,6 +134,9 @@
             break;
         case FUBeautyShapeItemBrowSpace:
             self.beauty.intensityBrowSpace = subModel.currentValue;
+            break;
+        case FUBeautyShapeItemBrowThick:
+            self.beauty.intensityBrowThick = subModel.currentValue;
             break;
         default:
             break;

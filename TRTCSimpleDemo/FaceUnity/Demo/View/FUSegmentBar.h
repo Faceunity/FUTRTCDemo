@@ -19,19 +19,30 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 - (BOOL)segmentBar:(FUSegmentBar *)segmentBar shouldSelectItemAtIndex:(NSInteger)index;
 
+- (BOOL)segmentBar:(FUSegmentBar *)segmentBar shouldDisableItemAtIndex:(NSInteger)index;
+
 @end
 
 @interface FUSegmentBarConfigurations : NSObject
 
-@property (nonatomic, strong) UIColor *normalTitleColor;             // 普通颜色
-@property (nonatomic, strong) UIColor *selectedTitleColor;           // 选中颜色
-@property (nonatomic, strong) UIFont *titleFont;                     // 字体
+/// 普通颜色
+@property (nonatomic, strong) UIColor *normalTitleColor;
+/// 选中状态颜色
+@property (nonatomic, strong) UIColor *selectedTitleColor;
+/// 无法选中状态颜色
+@property (nonatomic, strong) UIColor *disabledTitleColor;
+/// 字体
+@property (nonatomic, strong) UIFont *titleFont;
 
 @end
 
-@interface FUSegmentBar : UICollectionView
+@interface FUSegmentBar : UIView
 
-@property (nonatomic, weak) id<FUSegmentBarDelegate> segmentDelegate;
+@property (nonatomic, weak) id<FUSegmentBarDelegate> delegate;
+
+/// 当前选中项索引
+/// @discussion 默认为-1，-1为取消选中
+@property (nonatomic, assign) NSInteger selectedIndex;
 
 /// Unavailable initializer
 
@@ -41,16 +52,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 
-- (instancetype)initWithFrame:(CGRect)frame collectionViewLayout:(UICollectionViewLayout *)layout NS_UNAVAILABLE;
-
-/// 当前选中项索引（-1为取消选中）
-@property (nonatomic, assign) NSInteger selectedIndex;
-
 /// 初始化
 /// @param frame frame
 /// @param titles SegmentsTitle数组
 /// @param configuration 配置信息
 - (instancetype)initWithFrame:(CGRect)frame titles:(NSArray<NSString *> *)titles configuration:(nullable FUSegmentBarConfigurations *)configuration;
+
+- (void)refresh;
 
 @end
 

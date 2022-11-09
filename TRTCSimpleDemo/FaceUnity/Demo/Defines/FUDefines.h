@@ -32,6 +32,7 @@ typedef NS_ENUM(NSUInteger, FUBeautySkinItem) {
     FUBeautySkinItemWhiten,             // 美白
     FUBeautySkinItemRuddy,              // 红润
     FUBeautySkinItemSharpen,            // 锐化
+    FUBeautySkinItemFaceThreed,         // 五官立体
     FUBeautySkinItemEyeBrighten,        // 亮眼
     FUBeautySkinItemToothWhiten,        // 美牙
     FUBeautySkinItemCircles,            // 去黑眼圈
@@ -54,7 +55,10 @@ typedef NS_ENUM(NSUInteger, FUBeautyShapeItem) {
     FUBeautyShapeItemForehead,              // 额头
     FUBeautyShapeItemNose,                  // 瘦鼻
     FUBeautyShapeItemMouth,                 // 嘴型
+    FUBeautyShapeItemLipThick,              // 嘴唇厚度
+    FUBeautyShapeItemEyeHeight,             // 眼睛位置
     FUBeautyShapeItemCanthus,               // 开眼角
+    FUBeautyShapeItemEyeLid,                // 眼睑下至
     FUBeautyShapeItemEyeSpace,              // 眼距
     FUBeautyShapeItemEyeRotate,             // 眼睛角度
     FUBeautyShapeItemLongNose,              // 长鼻
@@ -62,6 +66,7 @@ typedef NS_ENUM(NSUInteger, FUBeautyShapeItem) {
     FUBeautyShapeItemSmile,                 // 微笑嘴角
     FUBeautyShapeItemBrowHeight,            // 眉毛上下
     FUBeautyShapeItemBrowSpace,             // 眉间距
+    FUBeautyShapeItemBrowThick,             // 眉毛粗细
     FUBeautyShapeItemMax
 };
 

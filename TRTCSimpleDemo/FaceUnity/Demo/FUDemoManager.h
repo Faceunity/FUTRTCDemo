@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param originY Demo视图在目标视图上的Y坐标（这里指的是底部功能选择栏的Y坐标，X坐标默认为0）
 - (instancetype)initWithTargetController:(UIViewController *)controller originY:(CGFloat)originY;
 
+/// 检测是否有ai人脸和人形
+- (void)faceUnityManagerCheckAI;
+
 @end
 
 NS_ASSUME_NONNULL_END

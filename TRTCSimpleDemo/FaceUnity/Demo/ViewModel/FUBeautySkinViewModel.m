@@ -73,6 +73,9 @@
         case FUBeautySkinItemSharpen:
             self.beauty.sharpen = subModel.currentValue;
             break;
+        case FUBeautySkinItemFaceThreed:
+            self.beauty.faceThreed = subModel.currentValue;
+            break;
         case FUBeautySkinItemEyeBrighten:
             self.beauty.eyeBright = subModel.currentValue;
             break;
