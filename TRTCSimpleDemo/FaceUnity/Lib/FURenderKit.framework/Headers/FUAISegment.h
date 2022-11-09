@@ -31,9 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)stopVideoDecode;
 
-//视频解析获取第一帧图片
-- (UIImage *)readFirstFrame;
-
 @property (nonatomic, strong) UIImage *backgroundImage; // 背景图片
 
 //NSURL or NSString

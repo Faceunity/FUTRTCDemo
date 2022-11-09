@@ -67,7 +67,7 @@
 		E3BB028F271558FD00E3B367 /* FUBeautyFunctionView.m in Sources */ = {isa = PBXBuildFile; fileRef = E3BB0258271558FD00E3B367 /* FUBeautyFunctionView.m */; };
 		E3BB0290271558FD00E3B367 /* FaceUnity.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3BB025D271558FD00E3B367 /* FaceUnity.strings */; };
 		E3BB0291271558FD00E3B367 /* oumei.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E3BB0260271558FD00E3B367 /* oumei.bundle */; };
-		E3BB0292271558FD00E3B367 /* Rose.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E3BB0261271558FD00E3B367 /* Rose.bundle */; };
+		E3BB0292271558FD00E3B367 /* rose.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E3BB0261271558FD00E3B367 /* rose.bundle */; };
 		E3BB0293271558FD00E3B367 /* linjia.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E3BB0262271558FD00E3B367 /* linjia.bundle */; };
 		E3BB0294271558FD00E3B367 /* yanshimao.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E3BB0263271558FD00E3B367 /* yanshimao.bundle */; };
 		E3BB0295271558FD00E3B367 /* tianmei.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E3BB0264271558FD00E3B367 /* tianmei.bundle */; };
@@ -225,7 +225,7 @@
 		E3BB025B271558FD00E3B367 /* FUDemoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUDemoManager.h; sourceTree = "<group>"; };
 		E3BB025E271558FD00E3B367 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/FaceUnity.strings"; sourceTree = "<group>"; };
 		E3BB0260271558FD00E3B367 /* oumei.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = oumei.bundle; sourceTree = "<group>"; };
-		E3BB0261271558FD00E3B367 /* Rose.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = Rose.bundle; sourceTree = "<group>"; };
+		E3BB0261271558FD00E3B367 /* rose.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = rose.bundle; sourceTree = "<group>"; };
 		E3BB0262271558FD00E3B367 /* linjia.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = linjia.bundle; sourceTree = "<group>"; };
 		E3BB0263271558FD00E3B367 /* yanshimao.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = yanshimao.bundle; sourceTree = "<group>"; };
 		E3BB0264271558FD00E3B367 /* tianmei.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = tianmei.bundle; sourceTree = "<group>"; };
@@ -571,7 +571,7 @@
 			isa = PBXGroup;
 			children = (
 				E3BB0260271558FD00E3B367 /* oumei.bundle */,
-				E3BB0261271558FD00E3B367 /* Rose.bundle */,
+				E3BB0261271558FD00E3B367 /* rose.bundle */,
 				E3BB0262271558FD00E3B367 /* linjia.bundle */,
 				E3BB0263271558FD00E3B367 /* yanshimao.bundle */,
 				E3BB0264271558FD00E3B367 /* tianmei.bundle */,
@@ -693,7 +693,7 @@
 				E32D4E2926382A9100E6C1C2 /* face_beautification.bundle in Resources */,
 				E3BB029A271558FD00E3B367 /* gangfeng.bundle in Resources */,
 				E3BB02A6271558FD00E3B367 /* xueqiu_lm_fu.bundle in Resources */,
-				E3BB0292271558FD00E3B367 /* Rose.bundle in Resources */,
+				E3BB0292271558FD00E3B367 /* rose.bundle in Resources */,
 				E3BB0293271558FD00E3B367 /* linjia.bundle in Resources */,
 				E3BB0297271558FD00E3B367 /* chaomo.bundle in Resources */,
 				E3BB02A2271558FD00E3B367 /* xinggan.bundle in Resources */,
@@ -945,9 +945,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 35A6KD62ZJ;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 35A6KD62ZJ;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -967,7 +969,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.faceunity.TRTCSimpleDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = FUWildcard;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = FUWildcard;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -978,9 +981,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 35A6KD62ZJ;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 35A6KD62ZJ;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1000,7 +1005,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.faceunity.TRTCSimpleDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = FUWildcard;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = FUWildcard;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

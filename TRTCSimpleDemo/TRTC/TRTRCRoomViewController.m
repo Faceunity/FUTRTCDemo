@@ -490,6 +490,8 @@
         [[FUGLContext shareGLContext] setCustomGLContext: _mContext];
     }
     
+    [self.demoManager faceUnityManagerCheckAI];
+    
     if ([FUManager shareManager].isRender) {
         [[FUTestRecorder shareRecorder] processFrameWithLog];
         [[FUManager shareManager] updateBeautyBlurEffect];

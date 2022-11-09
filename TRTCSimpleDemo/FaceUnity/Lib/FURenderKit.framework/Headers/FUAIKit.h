@@ -13,21 +13,30 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 人脸检测模式
 typedef enum : NSUInteger {
     FUFaceProcessorDetectModeImage,
     FUFaceProcessorDetectModeVideo,
 } FUFaceProcessorDetectMode;
 
+/// 人体检测模式
 typedef enum : NSUInteger {
     FUHumanProcessorDetectModeImage,
     FUHumanProcessorDetectModeVideo
 } FUHumanProcessorDetectMode;
 
+/// 人脸点位算法性能
 typedef enum : NSUInteger {
     FUFaceProcessorFaceLandmarkQualityLow,
     FUFaceProcessorFaceLandmarkQualityMedium,
     FUFaceProcessorFaceLandmarkQualityHigh
 } FUFaceProcessorFaceLandmarkQuality;
+
+/// 人体分割场景
+typedef enum : NSUInteger {
+    FUHumanSegmentationSceneTypeMeeting = 0,    // 视频会议
+    FUHumanSegmentationSceneTypeCommon          // 通用
+} FUHumanSegmentationSceneType;
 
 @interface FUAIKit : NSObject
 
@@ -49,40 +58,40 @@ typedef enum : NSUInteger {
 
 + (instancetype)shareKit;
 
+/// 加载AI模型
+/// @param type AI类型
+/// @param dataPath 模型路径
 + (void)loadAIModeWithAIType:(FUAITYPE)type dataPath:(NSString *)dataPath;
 
+/// 卸载AI模型
+/// @param type AI 类型
 + (void)unloadAIModeForAIType:(FUAITYPE)type;
 
+/// 卸载所有的AI模型
 + (void)unloadAllAIMode;
 
+/// 判断某 AI 模型是否加载
+/// @param type AI 类型
 + (BOOL)loadedAIType:(FUAITYPE)type;
 
+/// 加载舌头模型
+/// @param modePath 舌头模型地址
 + (void)loadTongueMode:(NSString *)modePath;
 
+/// 设置 AI 识别类型
+/// @param type AI 识别类型
 + (void)setTrackFaceAIType:(FUAITYPE)type;
 
+/// 对输入的图像进行 AI 识别，支持人脸、身体、手指能类型的识别
 + (int)trackFaceWithInput:(FUTrackFaceInput *)trackFaceInput;
 
-+ (void)resetHumanProcessor;
+/// 图像明显发生改变时调用该接口重置内部检测结果
++ (void)resetTrackedResult;
 
-+ (int)aiHumanProcessorNums;
-
+/// 跟踪到的人脸数量
 + (int)aiFaceProcessorNums;
 
-//人脸检测置信度
-+ (float)fuFaceProcessorGetConfidenceScore:(int)index;
-
-//ai手势识别
-+ (int)aiHandDistinguishNums;
-
-//handIndex 检测到手的索引
-+ (FUAIGESTURETYPE)fuHandDetectorGetResultGestureType:(int)handIndex;
-
-//动作识别： actionId index of fuHumanProcessorGetNumResults
-+ (int)fuHumanProcessorGetResultActionType:(int)actionId;
-
-
-//设置面部参数
+/// 设置面部参数
 + (void)setFaceTrackParam:(NSString *)param value:(int)value;
 
 /**
@@ -144,8 +153,46 @@ typedef enum : NSUInteger {
                      pret:(float *)pret
                    number:(int)number;
 
-/// 图像明显发生改变时调用该接口重置内部检测结果
-+ (void)resetTrackedResult;
+/// 人脸检测置信度
++ (float)fuFaceProcessorGetConfidenceScore:(int)index;
+
+/// 设置跟踪到人脸时每次检测的间隔帧数
+/// @param frames 帧数
+/// @note 底层默认间隔帧数为7
++ (void)setFaceProcessorDetectEveryFramesWhenFace:(int)frames;
+
+/// 设置未跟踪到人脸时每次检测的间隔帧数
+/// @param frames 帧数
+/// @note 底层默认间隔帧数为7
++ (void)setFaceProcessorDetectEveryFramesWhenNoFace:(int)frames;
+
+/// 设置人脸离开延迟打开或关闭
+/// @param enable YES为打开 NO为关闭
++ (void)setFaceDelayLeaveEnable:(BOOL)enable;
+
+/// 跟踪到的人体数量
++ (int)aiHumanProcessorNums;
+
+/// 重置身体识别
++ (void)resetHumanProcessor;
+
+/// 设置人体分割场景类型
++ (void)setHumanSegmentationSceneType:(FUHumanSegmentationSceneType)type;
+
+/// 跟踪到的手势数量
++ (int)aiHandDistinguishNums;
+
+/// 获取手势类型
+/// @param handIndex aiHandDistinguishNums返回手的索引
++ (FUAIGESTURETYPE)fuHandDetectorGetResultGestureType:(int)handIndex;
+
+/// 设置未跟踪到手势时每次检测的间隔帧数
+/// @param frames 帧数
++ (void)setHandDetectEveryFramesWhenNoHand:(int)frames;
+
+/// 动作识别： actionId index of fuHumanProcessorGetNumResults
++ (int)fuHumanProcessorGetResultActionType:(int)actionId;
+
 @end
 
 
@@ -191,6 +238,7 @@ typedef enum : NSUInteger {
 
 /// 设置 trackFace 相关的输入配置，详细参数请查看 FUTrackFaceConfig 类的接口注释。
 @property (nonatomic, strong) FUTrackFaceConfig *trackFaceConfig;
+
 @end
 
 

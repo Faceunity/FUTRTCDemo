@@ -24,6 +24,7 @@ FUParamsKeysDefine(FUModeKey,
                    FUModeKeyCheekNarrow = @"cheek_narrow",
                    FUModeKeyCheekSmall = @"cheek_small",
                    FUModeKeyEyeEnlarging = @"eye_enlarging",
+                   FUModeKeyIntensityChin = @"intensity_chin",
                    FUModeKeyIntensityForehead = @"intensity_forehead",
                    FUModeKeyIntensityNose = @"intensity_nose",
                    FUModeKeyIntensityMouth = @"intensity_mouth"

@@ -59,6 +59,14 @@
                     model.ratio = 1.0;
                 }
                     break;
+                case FUBeautySkinItemFaceThreed:{
+                    model.title = FULocalizedString(@"五官立体");
+                    model.imageName = @"五官立体";
+                    model.currentValue = 0.0;
+                    model.defaultValue = 0.0;
+                    model.ratio = 1.0;
+                }
+                    break;
                 case FUBeautySkinItemEyeBrighten:{
                     model.title = FULocalizedString(@"亮眼");
                     model.imageName = @"亮眼";

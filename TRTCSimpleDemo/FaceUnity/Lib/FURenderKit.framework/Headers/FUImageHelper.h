@@ -6,7 +6,7 @@
 //  Copyright © 2018年 L. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
 @interface FUImageHelper : NSObject
@@ -31,15 +31,25 @@
 
 + (unsigned char *)getRGBAWithImageName:(NSString *)imageName width:(int *)width height:(int *)height;
 
-//截屏处理取色
+/// 截屏处理取色
 + (UIColor*)getPixelColorScreenWindowAtLocation:(CGPoint)point;
 
-//针对静态图片处理取色
-+ (UIColor *)getPixelColorWithImage:(UIImage *)image point:(CGPoint)point;
+/// 针对静态图片处理取色
++ (UIColor *)getPixelColorWithImage:(UIImage *)image point:(CGPoint)point DEPRECATED_MSG_ATTRIBUTE("use colorInPoint: in FUGLDisplayView instead");
 
-//针对每一帧处理取色
-+ (UIColor *)getPixelColorWithPixelBuff:(CVPixelBufferRef)pixelBuffer point:(CGPoint)point;
+/// 针对每一帧处理取色
++ (UIColor *)getPixelColorWithPixelBuff:(CVPixelBufferRef)pixelBuffer point:(CGPoint)point DEPRECATED_MSG_ATTRIBUTE("use colorInPoint: in FUGLDisplayView instead");
 
-+ (UIImage*)rotateImageWithAngle:(UIImage*)vImg Angle:(NSInteger)vAngle IsExpand:(BOOL)vIsExpand;
++ (UIImage *)rotateImageWithAngle:(UIImage*)vImg Angle:(NSInteger)vAngle IsExpand:(BOOL)vIsExpand;
+
+/// 获取图像数据
+/// @param pixelBuffer buffer
+/// @param transform 图像方向(0: up  1: right  2: down  3: left)
+/// @return Byte
++ (Byte *)getBytesFromPixelBuffer:(CVPixelBufferRef)pixelBuffer transform:(int)transform;
+
+/// 获取视频第一帧图片
+/// @param videoURL 视频URL
++ (UIImage *)getPreviewImageWithVideoURL:(NSURL *)videoURL;
 
 @end

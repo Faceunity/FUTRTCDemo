@@ -20,8 +20,7 @@
 
 @protocol FUCaptureCameraDelegate <NSObject>
 
--(void)didOutputVideoSampleBuffer:(CMSampleBufferRef)sampleBuffer;
-
+-(void)didOutputVideoSampleBuffer:(CMSampleBufferRef)sampleBuffer captureDevicePosition:(AVCaptureDevicePosition)position;
 
 @end
 
@@ -31,11 +30,11 @@
 
 @end
 
-typedef NS_ENUM( NSInteger, FUCaptureCameraFocusModel) {
+typedef NS_ENUM( NSInteger, FUCaptureCameraFocusMode) {
     /* 先找人脸对焦模式 */
-    FUCaptureCameraFocusModelAutoFace,
+    FUCaptureCameraFocusModeAutoFace,
     /* 固定点对焦模式 */
-    FUCaptureCameraFocusModelChangeless
+    FUCaptureCameraFocusModeChangeless
 };
 
 @interface FUCaptureCamera : NSObject
@@ -130,8 +129,8 @@ typedef NS_ENUM( NSInteger, FUCaptureCameraFocusModel) {
 
 
 ///  修改对焦模式
-/// @param modle 对焦模式
-- (void)cameraChangeModle:(FUCaptureCameraFocusModel)modle;
+/// @param mode 对焦模式
+- (void)cameraChangeMode:(FUCaptureCameraFocusMode)mode;
 
 //  缩放
 //  可用于模拟对焦

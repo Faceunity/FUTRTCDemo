@@ -11,16 +11,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <FURenderKit/FURenderKit.h>
 
-@protocol FUManagerProtocol <NSObject>
-
-//用于检测是否有ai人脸和人形
-- (void)faceUnityManagerCheckAI;
-
-@end
-
 @interface FUManager : NSObject
-
-@property (nonatomic, weak) id<FUManagerProtocol>delegate;
 
 @property (nonatomic, assign) BOOL isRender;
 
