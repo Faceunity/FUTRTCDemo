@@ -1,15 +1,18 @@
 //
 //  FUStickerModel.h
-//  XPYCamera
+//  FURTCDemo
 //
-//  Created by 项林平 on 2021/7/19.
+//  Created by 项林平 on 2023/2/6.
 //
 
-#import "FUModel.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FUStickerModel : FUModel
+@interface FUStickerModel : NSObject
+
+@property (nonatomic, copy) NSString *bundleName;
+@property (nonatomic, copy) NSString *icon;
 
 @end
 

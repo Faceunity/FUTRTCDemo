@@ -6,154 +6,153 @@
 //
 
 #import "FUBeautyShapeViewModel.h"
-#import "FUBeautyShapeModel.h"
 
 @interface FUBeautyShapeViewModel ()
 
-@property (nonatomic, strong) FUBeauty *beauty;
+@property (nonatomic, copy) NSArray<FUBeautyShapeModel *> *beautyShapes;
 
 @end
 
 @implementation FUBeautyShapeViewModel
 
-- (instancetype)initWithSelectedIndex:(NSInteger)selectedIndex needSlider:(BOOL)isNeedSlider {
-    self = [super initWithSelectedIndex:selectedIndex needSlider:isNeedSlider];
+- (instancetype)init {
+    self = [super init];
     if (self) {
-        self.model = [[FUBeautyShapeModel alloc] init];
+        self.beautyShapes = [self defaultShapes];
+        self.selectedIndex = -1;
+        self.performanceLevel = [FURenderKit devicePerformanceLevel];
         
-        if ([FURenderKit shareRenderKit].beauty) {
-            self.beauty = [FURenderKit shareRenderKit].beauty;
-        } else {
-            NSString *path = [[NSBundle mainBundle] pathForResource:@"face_beautification" ofType:@"bundle"];
-            self.beauty = [[FUBeauty alloc] initWithPath:path name:@"FUBeauty"];
-            self.beauty.heavyBlur = 0;
-            self.beauty.blurType = 3;
-            self.beauty.faceShape = 4;
-        }
-        
-        // 默认美颜
-        for (FUSubModel *subModel in self.model.moduleData) {
-            [self updateData:subModel];
-        }
+        [self setAllShapeValues];
     }
     return self;
 }
 
-#pragma mark - Override
-- (void)startRender {
-    [super startRender];
-    if (![FURenderKit shareRenderKit].beauty) {
-        [FURenderKit shareRenderKit].beauty = self.beauty;
-    }
-    if (![FURenderKit shareRenderKit].beauty.enable) {
-        [FURenderKit shareRenderKit].beauty.enable = YES;
-    }
-}
+#pragma mark - Instance methods
 
-- (void)stopRender {
-    [super stopRender];
-    [FURenderKit shareRenderKit].beauty.enable = NO;
-    [FURenderKit shareRenderKit].beauty = nil;
-    
-}
-
-- (void)updateData:(FUSubModel *)subModel {
-    if (!subModel) {
-        NSLog(@"FaceUnity：美肤数据为空");
+- (void)setShapeValue:(double)value {
+    if (self.selectedIndex < 0 || self.selectedIndex >= self.beautyShapes.count) {
         return;
     }
-    switch (subModel.functionType) {
-        case FUBeautyShapeItemCheekThinning:
-            self.beauty.cheekThinning = subModel.currentValue;
+    FUBeautyShapeModel *model = self.beautyShapes[self.selectedIndex];
+    model.currentValue = value;
+    [self setValue:model.currentValue forType:model.type];
+}
+
+- (void)setAllShapeValues {
+    for (FUBeautyShapeModel *shape in self.beautyShapes) {
+        [self setValue:shape.currentValue forType:shape.type];
+    }
+}
+
+- (void)recoverAllShapeValuesToDefault {
+    for (FUBeautyShapeModel *shape in self.beautyShapes) {
+        shape.currentValue = shape.defaultValue;
+        [self setValue:shape.currentValue forType:shape.type];
+    }
+}
+
+#pragma mark - Private methods
+
+- (void)setValue:(double)value forType:(FUBeautyShape)type {
+    switch (type) {
+        case FUBeautyShapeCheekThinning:
+            [FURenderKit shareRenderKit].beauty.cheekThinning = value;
             break;
-        case FUBeautyShapeItemCheekV:
-            self.beauty.cheekV = subModel.currentValue;
+        case FUBeautyShapeCheekV:
+            [FURenderKit shareRenderKit].beauty.cheekV = value;
             break;
-        case FUBeautyShapeItemCheekNarrow:
-            self.beauty.cheekNarrow = subModel.currentValue;
+        case FUBeautyShapeCheekNarrow:
+            [FURenderKit shareRenderKit].beauty.cheekNarrow = value;
             break;
-        case FUBeautyShapeItemCheekShort:
-            self.beauty.cheekShort = subModel.currentValue;
+        case FUBeautyShapeCheekShort:
+            [FURenderKit shareRenderKit].beauty.cheekShort = value;
             break;
-        case FUBeautyShapeItemCheekSmall:
-            self.beauty.cheekSmall = subModel.currentValue;
+        case FUBeautyShapeCheekSmall:
+            [FURenderKit shareRenderKit].beauty.cheekSmall = value;
             break;
-        case FUBeautyShapeItemCheekBones:
-            self.beauty.intensityCheekbones = subModel.currentValue;
+        case FUBeautyShapeCheekbones:
+            [FURenderKit shareRenderKit].beauty.intensityCheekbones = value;
             break;
-        case FUBeautyShapeItemLowerJaw:
-            self.beauty.intensityLowerJaw = subModel.currentValue;
+        case FUBeautyShapeLowerJaw:
+            [FURenderKit shareRenderKit].beauty.intensityLowerJaw = value;
             break;
-        case FUBeautyShapeItemEyeEnlarging:
-            self.beauty.eyeEnlarging = subModel.currentValue;
+        case FUBeautyShapeEyeEnlarging:
+            [FURenderKit shareRenderKit].beauty.eyeEnlarging = value;
             break;
-        case FUBeautyShapeItemEyeCircle:
-            self.beauty.intensityEyeCircle = subModel.currentValue;
+        case FUBeautyShapeEyeCircle:
+            [FURenderKit shareRenderKit].beauty.intensityEyeCircle = value;
             break;
-        case FUBeautyShapeItemChin:
-            self.beauty.intensityChin = subModel.currentValue;
+        case FUBeautyShapeChin:
+            [FURenderKit shareRenderKit].beauty.intensityChin = value;
             break;
-        case FUBeautyShapeItemForehead:
-            self.beauty.intensityForehead = subModel.currentValue;
+        case FUBeautyShapeForehead:
+            [FURenderKit shareRenderKit].beauty.intensityForehead = value;
             break;
-        case FUBeautyShapeItemNose:
-            self.beauty.intensityNose = subModel.currentValue;
+        case FUBeautyShapeNose:
+            [FURenderKit shareRenderKit].beauty.intensityNose = value;
             break;
-        case FUBeautyShapeItemMouth:
-            self.beauty.intensityMouth = subModel.currentValue;
+        case FUBeautyShapeMouth:
+            [FURenderKit shareRenderKit].beauty.intensityMouth = value;
             break;
-        case FUBeautyShapeItemLipThick:
-            self.beauty.intensityLipThick = subModel.currentValue;
+        case FUBeautyShapeLipThick:
+            [FURenderKit shareRenderKit].beauty.intensityLipThick = value;
             break;
-        case FUBeautyShapeItemEyeHeight:
-            self.beauty.intensityEyeHeight = subModel.currentValue;
+        case FUBeautyShapeEyeHeight:
+            [FURenderKit shareRenderKit].beauty.intensityEyeHeight = value;
             break;
-        case FUBeautyShapeItemCanthus:
-            self.beauty.intensityCanthus = subModel.currentValue;
+        case FUBeautyShapeCanthus:
+            [FURenderKit shareRenderKit].beauty.intensityCanthus = value;
             break;
-        case FUBeautyShapeItemEyeLid:
-            self.beauty.intensityEyeLid = subModel.currentValue;
+        case FUBeautyShapeEyeLid:
+            [FURenderKit shareRenderKit].beauty.intensityEyeLid = value;
             break;
-        case FUBeautyShapeItemEyeSpace:
-            self.beauty.intensityEyeSpace = subModel.currentValue;
+        case FUBeautyShapeEyeSpace:
+            [FURenderKit shareRenderKit].beauty.intensityEyeSpace = value;
             break;
-        case FUBeautyShapeItemEyeRotate:
-            self.beauty.intensityEyeRotate = subModel.currentValue;
+        case FUBeautyShapeEyeRotate:
+            [FURenderKit shareRenderKit].beauty.intensityEyeRotate = value;
             break;
-        case FUBeautyShapeItemLongNose:
-            self.beauty.intensityLongNose = subModel.currentValue;
+        case FUBeautyShapeLongNose:
+            [FURenderKit shareRenderKit].beauty.intensityLongNose = value;
             break;
-        case FUBeautyShapeItemPhiltrum:
-            self.beauty.intensityPhiltrum = subModel.currentValue;
+        case FUBeautyShapePhiltrum:
+            [FURenderKit shareRenderKit].beauty.intensityPhiltrum = value;
             break;
-        case FUBeautyShapeItemSmile:
-            self.beauty.intensitySmile = subModel.currentValue;
+        case FUBeautyShapeSmile:
+            [FURenderKit shareRenderKit].beauty.intensitySmile = value;
             break;
-        case FUBeautyShapeItemBrowHeight:
-            self.beauty.intensityBrowHeight = subModel.currentValue;
+        case FUBeautyShapeBrowHeight:
+            [FURenderKit shareRenderKit].beauty.intensityBrowHeight = value;
             break;
-        case FUBeautyShapeItemBrowSpace:
-            self.beauty.intensityBrowSpace = subModel.currentValue;
+        case FUBeautyShapeBrowSpace:
+            [FURenderKit shareRenderKit].beauty.intensityBrowSpace = value;
             break;
-        case FUBeautyShapeItemBrowThick:
-            self.beauty.intensityBrowThick = subModel.currentValue;
-            break;
-        default:
+        case FUBeautyShapeBrowThick:
+            [FURenderKit shareRenderKit].beauty.intensityBrowThick = value;
             break;
     }
 }
 
-- (void)recover {
-    for (FUSubModel *subModel in self.model.moduleData) {
-        subModel.currentValue = subModel.defaultValue;
-        [self updateData:subModel];
+#pragma mark - Getters
+
+- (NSArray<FUBeautyShapeModel *> *)defaultShapes {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *shapePath = [bundle pathForResource:@"beauty_shape" ofType:@"json"];
+    NSArray<NSDictionary *> *shapeData = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:shapePath] options:NSJSONReadingMutableContainers error:nil];
+    NSMutableArray *shapes = [[NSMutableArray alloc] init];
+    for (NSDictionary *dictionary in shapeData) {
+        FUBeautyShapeModel *model = [[FUBeautyShapeModel alloc] init];
+        [model setValuesForKeysWithDictionary:dictionary];
+        [shapes addObject:model];
     }
+    return [shapes copy];
 }
+
 
 - (BOOL)isDefaultValue {
-    for (FUSubModel *subModel in self.model.moduleData) {
-        int currentIntValue = subModel.isBidirection ? (int)(subModel.currentValue / subModel.ratio * 100 - 50) : (int)(subModel.currentValue / subModel.ratio * 100);
-        int defaultIntValue = subModel.isBidirection ? (int)(subModel.defaultValue / subModel.ratio * 100 - 50) : (int)(subModel.defaultValue / subModel.ratio * 100);
+    for (FUBeautyShapeModel *shape in self.beautyShapes) {
+        int currentIntValue = shape.defaultValueInMiddle ? (int)(shape.currentValue * 100 - 50) : (int)(shape.currentValue * 100);
+        int defaultIntValue = shape.defaultValueInMiddle ? (int)(shape.defaultValue * 100 - 50) : (int)(shape.defaultValue * 100);
         if (currentIntValue != defaultIntValue) {
             return NO;
         }

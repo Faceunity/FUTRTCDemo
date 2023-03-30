@@ -8,20 +8,37 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#import "FUTestRecorder.h"
 #import "FUDefines.h"
-#import "FUManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FUDemoManager : NSObject
 
-/// Initializer
-/// @param controller 目标控制器
-/// @param originY Demo视图在目标视图上的Y坐标（这里指的是底部功能选择栏的Y坐标，X坐标默认为0）
-- (instancetype)initWithTargetController:(UIViewController *)controller originY:(CGFloat)originY;
+/// 开关状态
+@property (nonatomic, assign, readonly) BOOL shouldRender;
 
-/// 检测是否有ai人脸和人形
-- (void)faceUnityManagerCheckAI;
++ (instancetype)shared;
+
+/// 初始化FURenderKit
++ (void)setupFUSDK;
+
+/// 注销FURenderKit和单例
++ (void)destory;
+
+/// 重置检测结果
++ (void)resetTrackedResult;
+
+/// 更新美颜磨皮效果（根据人脸检测置信度设置不同磨皮效果）
++ (void)updateBeautyBlurEffect;
+
+/// 添加视图到指定父视图
+/// @param view 父视图
+/// @param originY 视图在父视图上的Y坐标（底部功能选择栏的Y坐标，X坐标默认为0）
+- (void)addDemoViewToView:(UIView *)view originY:(CGFloat)originY;
+
+/// 人脸/人体检测
+- (void)checkAITrackedResult;
 
 @end
 

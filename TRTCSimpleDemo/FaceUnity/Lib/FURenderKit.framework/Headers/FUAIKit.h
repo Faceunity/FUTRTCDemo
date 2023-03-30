@@ -38,6 +38,13 @@ typedef enum : NSUInteger {
     FUHumanSegmentationSceneTypeCommon          // 通用
 } FUHumanSegmentationSceneType;
 
+/// 人体分割模式
+typedef enum : NSUInteger {
+    FUHumanSegmentationModeCPUCommon = 0x00,    // CPU通用模式
+    FUHumanSegmentationModeGPUCommon = 0x01,    // GPU通用模式
+    FUHumanSegmentationModeGPUMeeting = 0x02    // GPU会议模式
+} FUHumanSegmentationMode;
+
 @interface FUAIKit : NSObject
 
 @property (nonatomic, assign) int maxTrackFaces; // 设置最大的人脸跟踪个数 default is 1
@@ -62,6 +69,12 @@ typedef enum : NSUInteger {
 /// @param type AI类型
 /// @param dataPath 模型路径
 + (void)loadAIModeWithAIType:(FUAITYPE)type dataPath:(NSString *)dataPath;
+
+/// 加载人体AI模型
+/// @param dataPath 模型路径
+/// @param mode 人体分割模式
+/// @note 使用 loadAIModeWithAIType:dataPath: 接口加载人体模型时默认的分割模式为 FUHumanSegmentationModeCPUCommon
++ (void)loadAIHumanModelWithDataPath:(NSString *)dataPath segmentationMode:(FUHumanSegmentationMode)mode;
 
 /// 卸载AI模型
 /// @param type AI 类型
@@ -177,7 +190,7 @@ typedef enum : NSUInteger {
 + (void)resetHumanProcessor;
 
 /// 设置人体分割场景类型
-+ (void)setHumanSegmentationSceneType:(FUHumanSegmentationSceneType)type;
++ (void)setHumanSegmentationSceneType:(FUHumanSegmentationSceneType)type __attribute__((deprecated("Use loadAIHumanModelWithDataPath: segmentationMode: instead.")));
 
 /// 跟踪到的手势数量
 + (int)aiHandDistinguishNums;

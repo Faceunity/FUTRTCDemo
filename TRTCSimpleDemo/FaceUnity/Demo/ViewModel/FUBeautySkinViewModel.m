@@ -10,105 +10,105 @@
 
 @interface FUBeautySkinViewModel ()
 
-@property (nonatomic, strong) FUBeauty *beauty;
+@property (nonatomic, copy) NSArray<FUBeautySkinModel *> *beautySkins;
 
 @end
 
 @implementation FUBeautySkinViewModel
 
-- (instancetype)initWithSelectedIndex:(NSInteger)selectedIndex needSlider:(BOOL)isNeedSlider {
-    self = [super initWithSelectedIndex:selectedIndex needSlider:isNeedSlider];
+- (instancetype)init {
+    self = [super init];
     if (self) {
-        self.model = [[FUBeautySkinModel alloc] init];
-        if ([FURenderKit shareRenderKit].beauty) {
-            self.beauty = [FURenderKit shareRenderKit].beauty;
-        } else {
-            NSString *path = [[NSBundle mainBundle] pathForResource:@"face_beautification" ofType:@"bundle"];
-            self.beauty = [[FUBeauty alloc] initWithPath:path name:@"FUBeauty"];
-            self.beauty.heavyBlur = 0;
-            self.beauty.blurType = 3;
-            self.beauty.faceShape = 4;
-        }
+        self.beautySkins = [self defaultSkins];
+        _selectedIndex = -1;
         
-        // 默认美肤
-        for (FUSubModel *subModel in self.model.moduleData) {
-            [self updateData:subModel];
-        }
+        [self setAllSkinValues];
     }
     return self;
 }
 
-#pragma mark - Override
-- (void)startRender {
-    [super startRender];
-    if (![FURenderKit shareRenderKit].beauty) {
-        [FURenderKit shareRenderKit].beauty = self.beauty;
-    }
-    if (![FURenderKit shareRenderKit].beauty.enable) {
-        [FURenderKit shareRenderKit].beauty.enable = YES;
-    }
-}
+#pragma mark - Instance methods
 
-- (void)stopRender {
-    [super stopRender];
-    [FURenderKit shareRenderKit].beauty.enable = NO;
-    [FURenderKit shareRenderKit].beauty = nil;
-}
-
-- (void)updateData:(FUSubModel *)subModel {
-    if (!subModel) {
-        NSLog(@"FaceUnity：美肤数据为空");
+- (void)setSkinValue:(double)value {
+    if (self.selectedIndex < 0 || self.selectedIndex >= self.beautySkins.count) {
         return;
     }
-    switch (subModel.functionType) {
-        case FUBeautySkinItemFineSmooth:
-            self.beauty.blurLevel = subModel.currentValue;
+    FUBeautySkinModel *model = self.beautySkins[self.selectedIndex];
+    model.currentValue = value * model.ratio;
+    [self setValue:model.currentValue forType:model.type];
+}
+
+- (void)setAllSkinValues {
+    for (FUBeautySkinModel *skin in self.beautySkins) {
+        [self setValue:skin.currentValue forType:skin.type];
+    }
+}
+
+- (void)recoverAllSkinValuesToDefault {
+    for (FUBeautySkinModel *skin in self.beautySkins) {
+        skin.currentValue = skin.defaultValue;
+        [self setValue:skin.currentValue forType:skin.type];
+    }
+}
+
+#pragma mark - Private methods
+
+- (void)setValue:(double)value forType:(FUBeautySkin)type {
+    switch (type) {
+        case FUBeautySkinBlurLevel:
+            [FURenderKit shareRenderKit].beauty.blurLevel = value;
             break;
-        case FUBeautySkinItemWhiten:
-            self.beauty.colorLevel = subModel.currentValue;
+        case FUBeautySkinColorLevel:
+            [FURenderKit shareRenderKit].beauty.colorLevel = value;
             break;
-        case FUBeautySkinItemRuddy:
-            self.beauty.redLevel = subModel.currentValue;
+        case FUBeautySkinRedLevel:
+            [FURenderKit shareRenderKit].beauty.redLevel = value;
             break;
-        case FUBeautySkinItemSharpen:
-            self.beauty.sharpen = subModel.currentValue;
+        case FUBeautySkinSharpen:
+            [FURenderKit shareRenderKit].beauty.sharpen = value;
             break;
-        case FUBeautySkinItemFaceThreed:
-            self.beauty.faceThreed = subModel.currentValue;
+        case FUBeautySkinFaceThreed:
+            [FURenderKit shareRenderKit].beauty.faceThreed = value;
             break;
-        case FUBeautySkinItemEyeBrighten:
-            self.beauty.eyeBright = subModel.currentValue;
+        case FUBeautySkinEyeBright:
+            [FURenderKit shareRenderKit].beauty.eyeBright = value;
             break;
-        case FUBeautySkinItemToothWhiten:
-            self.beauty.toothWhiten = subModel.currentValue;
+        case FUBeautySkinToothWhiten:
+            [FURenderKit shareRenderKit].beauty.toothWhiten = value;
             break;
-        case FUBeautySkinItemCircles:
-            self.beauty.removePouchStrength = subModel.currentValue;
+        case FUBeautySkinRemovePouchStrength:
+            [FURenderKit shareRenderKit].beauty.removePouchStrength = value;
             break;
-        case FUBeautySkinItemWrinkles:
-            self.beauty.removeNasolabialFoldsStrength = subModel.currentValue;
-            break;
-        default:
+        case FUBeautySkinRemoveNasolabialFoldsStrength:
+            [FURenderKit shareRenderKit].beauty.removeNasolabialFoldsStrength = value;
             break;
     }
 }
 
-- (void)recover {
-    for (FUSubModel *subModel in self.model.moduleData) {
-        subModel.currentValue = subModel.defaultValue;
-        [self updateData:subModel];
-    }
-}
+#pragma mark - Getters
 
 - (BOOL)isDefaultValue {
-    for (FUSubModel *subModel in self.model.moduleData) {
-        int currentIntValue = subModel.isBidirection ? (int)(subModel.currentValue / subModel.ratio * 100 - 50) : (int)(subModel.currentValue / subModel.ratio * 100);
-        int defaultIntValue = subModel.isBidirection ? (int)(subModel.defaultValue / subModel.ratio * 100 - 50) : (int)(subModel.defaultValue / subModel.ratio * 100);
+    for (FUBeautySkinModel *skin in self.beautySkins) {
+        int currentIntValue = skin.defaultValueInMiddle ? (int)(skin.currentValue / skin.ratio * 100 - 50) : (int)(skin.currentValue / skin.ratio * 100);
+        int defaultIntValue = skin.defaultValueInMiddle ? (int)(skin.defaultValue / skin.ratio * 100 - 50) : (int)(skin.defaultValue / skin.ratio * 100);
         if (currentIntValue != defaultIntValue) {
             return NO;
         }
     }
     return YES;
+}
+
+- (NSArray<FUBeautySkinModel *> *)defaultSkins {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *skinPath = [bundle pathForResource:@"beauty_skin" ofType:@"json"];
+    NSArray<NSDictionary *> *skinData = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:skinPath] options:NSJSONReadingMutableContainers error:nil];
+    NSMutableArray *skins = [[NSMutableArray alloc] init];
+    for (NSDictionary *dictionary in skinData) {
+        FUBeautySkinModel *model = [[FUBeautySkinModel alloc] init];
+        [model setValuesForKeysWithDictionary:dictionary];
+        [skins addObject:model];
+    }
+    return [skins copy];
 }
 
 @end
