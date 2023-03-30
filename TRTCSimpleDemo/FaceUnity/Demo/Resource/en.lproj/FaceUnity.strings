@@ -1,4 +1,4 @@
-/* 
+/*
   FaceUnity.strings
   XPYCamera
 
@@ -64,12 +64,12 @@
 "瘦腿" = "Thin leg";
 
 /// Filter
-"原图" = "Origin";
-"自然1" = "Nature1";
-"质感灰1" = "Texture grey1";
-"白亮1" = "Bright1";
-"粉嫩1" = "Pink1";
-"冷色调1"= "Cold tone1";
+"origin" = "Origin";
+"ziran1" = "Nature1";
+"zhiganhui1" = "Texture grey1";
+"bailiang1" = "Bright1";
+"fennen1" = "Pink1";
+"lengsediao1"= "Cold tone1";
 
 "卸妆" = "Remove";
 "恢复" = "Recover";

@@ -7,183 +7,133 @@
 
 #import "FUDemoManager.h"
 
-#import "FUBeautyFunctionView.h"
-#import "FUOthersFunctionView.h"
-
-#import "FUBeautySkinViewModel.h"
-#import "FUBeautyShapeViewModel.h"
-#import "FUFilterViewModel.h"
-#import "FUStickerViewModel.h"
-#import "FUMakeupViewModel.h"
-#import "FUBeautyBodyViewModel.h"
+#import "FUBeautySkinView.h"
+#import "FUBeautyShapeView.h"
+#import "FUBeautyFilterView.h"
+#import "FUStickerView.h"
+#import "FUMakeupView.h"
+#import "FUBodyView.h"
 
 #import "FUSegmentBar.h"
+#import "FUAlertManager.h"
 
-@interface FUDemoManager ()<FUFunctionViewDelegate, FUSegmentBarDelegate>
+#import "authpack.h"
+
+@interface FUDemoManager ()<FUSegmentBarDelegate>
 
 /// 底部功能选择栏
 @property (nonatomic, strong) FUSegmentBar *bottomBar;
 /// 美肤功能视图
-@property (nonatomic, strong) FUBeautyFunctionView *skinView;
+@property (nonatomic, strong) FUBeautySkinView *skinView;
 /// 美型功能视图
-@property (nonatomic, strong) FUBeautyFunctionView *shapeView;
+@property (nonatomic, strong) FUBeautyShapeView *shapeView;
 /// 滤镜功能视图
-@property (nonatomic, strong) FUOthersFunctionView *filterView;
+@property (nonatomic, strong) FUBeautyFilterView *filterView;
 /// 贴纸功能视图
-@property (nonatomic, strong) FUOthersFunctionView *stickerView;
+@property (nonatomic, strong) FUStickerView *stickerView;
 /// 美妆功能视图
-@property (nonatomic, strong) FUOthersFunctionView *makeupView;
+@property (nonatomic, strong) FUMakeupView *makeupView;
 /// 美体功能视图
-@property (nonatomic, strong) FUBeautyFunctionView *bodyView;
+@property (nonatomic, strong) FUBodyView *bodyView;
+
+@property (nonatomic, strong) UIView *showingView;
 
 /// 效果开关
 @property (nonatomic, strong) UISwitch *renderSwitch;
 /// 提示标签
 @property (nonatomic, strong) UILabel *trackTipLabel;
 
-@property (nonatomic, strong) FUBeautySkinViewModel *beautySkinViewModel;
-@property (nonatomic, strong) FUBeautyShapeViewModel *beautyShapeViewModel;
-@property (nonatomic, strong) FUFilterViewModel *filterViewModel;
-@property (nonatomic, strong) FUStickerViewModel *stickerViewModel;
-@property (nonatomic, strong) FUMakeupViewModel *makeupViewModel;
-@property (nonatomic, strong) FUBeautyBodyViewModel *beautyBodyViewModel;
-
-/// 全部模块
-@property (nonatomic, copy) NSArray<FUViewModel *> *viewModels;
-
-/// 全部功能视图数组
-@property (nonatomic, copy) NSArray<FUFunctionView *> *moduleViews;
-
-/// 当前正在显示的模块类型
-@property (nonatomic, assign) FUModuleType showingModuleType;
-
-/// 当前是否显示子功能视图
-@property (nonatomic, assign) BOOL isShowingFunctionView;
-
-@property (nonatomic, weak) UIViewController *targetController;
+@property (nonatomic, weak) UIView *targetView;
 @property (nonatomic, assign) CGFloat demoOriginY;
+
+@property (nonatomic, assign) BOOL shouldRender;
 
 @end
 
 @implementation FUDemoManager
 
-#pragma mark - Initialization
-- (instancetype)initWithTargetController:(UIViewController *)controller originY:(CGFloat)originY {
+static FUDemoManager *demoManager = nil;
+static dispatch_once_t onceToken;
+
++ (instancetype)shared {
+    dispatch_once(&onceToken, ^{
+        demoManager = [[FUDemoManager alloc] init];
+    });
+    return demoManager;
+}
+
+- (instancetype)init {
     self = [super init];
     if (self) {
-        NSAssert(controller != nil, @"目标控制器不能为空");
-        
-        [FUManager shareManager].isRender = YES;
-        
-        self.targetController = controller;
-        self.demoOriginY = originY;
-        
-        // 加载默认效果
-        NSString *path = [[NSBundle mainBundle] pathForResource:@"face_beautification" ofType:@"bundle"];
-        FUBeauty *beauty = [[FUBeauty alloc] initWithPath:path name:@"FUBeauty"];
-        // 默认均匀磨皮
-        beauty.heavyBlur = 0;
-        beauty.blurType = 3;
-        // 默认自定义脸型
-        beauty.faceShape = 4;
-        // 高性能设备设置去黑眼圈、去法令纹、大眼、嘴型最新效果
-        if ([FUManager shareManager].devicePerformanceLevel == FUDevicePerformanceLevelHigh) {
-            [beauty addPropertyMode:FUBeautyPropertyMode2 forKey:FUModeKeyRemovePouchStrength];
-            [beauty addPropertyMode:FUBeautyPropertyMode2 forKey:FUModeKeyRemoveNasolabialFoldsStrength];
-            [beauty addPropertyMode:FUBeautyPropertyMode3 forKey:FUModeKeyEyeEnlarging];
-            [beauty addPropertyMode:FUBeautyPropertyMode3 forKey:FUModeKeyIntensityMouth];
-        }
-        [FURenderKit shareRenderKit].beauty = beauty;
-        
-        // 默认美肤、美型、滤镜
-        [self.beautySkinViewModel startRender];
-        [self.beautyShapeViewModel startRender];
-        [self.filterViewModel startRender];
-        
-        [controller.view addSubview:self.bottomBar];
-        [controller.view addSubview:self.skinView];
-        [controller.view addSubview:self.shapeView];
-        [controller.view addSubview:self.filterView];
-        [controller.view addSubview:self.stickerView];
-        [controller.view addSubview:self.makeupView];
-        [controller.view addSubview:self.bodyView];
-        
-        [controller.view addSubview:self.trackTipLabel];
-        
-        // 分割线
-        UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, originY, CGRectGetWidth(controller.view.bounds), 1)];
-        lineView.backgroundColor = [UIColor colorWithRed:229/ 255.f green:229/255.f blue:229/255.f alpha:0.2];
-        [controller.view addSubview:lineView];
-        
-        [controller.view addSubview:self.renderSwitch];
+        self.shouldRender = YES;
     }
     return self;
 }
 
-#pragma mark - Private methods
-- (void)resolveModuleOperations:(NSInteger)item {
-    NSInteger count = self.moduleViews.count;
-    if (item >= count) {
-        return;
-    }
-    if (item == -1) {
-        // 隐藏当前视图
-        [self hideFunctionView:self.moduleViews[self.showingModuleType] animated:YES];
-        _isShowingFunctionView = NO;
-        // 隐藏效果开关
-        self.renderSwitch.hidden = YES;
-    } else {
-        if (_isShowingFunctionView) {
-            // 当前已经有显示的视图时，需要先隐藏当前视图，再显示目标视图
-            [self hideFunctionView:self.moduleViews[self.showingModuleType] animated:NO];
-            [self showFunctionView:self.moduleViews[item]];
-        } else {
-            // 当前无显示的视图时，直接显示目标视图
-            [self showFunctionView:self.moduleViews[item]];
-            _isShowingFunctionView = YES;
-        }
-        // 保存显示的类型
-        self.showingModuleType = item;
-        
-        [FUAIKit shareKit].maxTrackFaces = self.viewModels[item].model.type == FUModuleTypeBeautyBody ? 1 : 4;
-        
-        if (self.viewModels[item].model.type == FUModuleTypeBeautySkin || self.viewModels[item].model.type == FUModuleTypeBeautyShape || self.viewModels[item].model.type == FUModuleTypeBeautyBody) {
-            // 显示效果开关
-            self.renderSwitch.hidden = NO;
-            if (self.viewModels[item].model.type == FUModuleTypeBeautySkin || self.viewModels[item].model.type == FUModuleTypeBeautyShape) {
-                // 美肤和美型效果同开同关
-                self.renderSwitch.on = self.viewModels[FUModuleTypeBeautySkin].isRendering && self.viewModels[FUModuleTypeBeautyShape].isRendering;
-            } else {
-                // 美体效果
-                self.renderSwitch.on = self.viewModels[FUModuleTypeBeautyBody].isRendering;
-                if (self.viewModels[FUModuleTypeBeautyBody].isRendering) {
-                    [self.viewModels[FUModuleTypeBeautyBody] startRender];
-                }
-            }
-            if (self.moduleViews[item].slider.hidden) {
-                self.renderSwitch.frame = CGRectMake(5, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight - 10, 50, 30);
-            } else {
-                self.renderSwitch.frame = CGRectMake(5, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight - 40, 50, 30);
-            }
-            
-        } else {
-            if (self.viewModels[item].model.type == FUModuleTypeMakeup) {
-                // 美妆需要预先加载face_makeup.bundle
-                if (!self.viewModels[FUModuleTypeMakeup].isRendering) {
-                    [self.viewModels[FUModuleTypeMakeup] startRender];
-                }
-            }
-            // 隐藏效果开关
-            self.renderSwitch.hidden = YES;
-        }
-    }
++ (void)setupFUSDK {
+    [FURenderKit setLogLevel:FU_LOG_LEVEL_INFO];
+    FUSetupConfig *setupConfig = [[FUSetupConfig alloc] init];
+    setupConfig.authPack = FUAuthPackMake(g_auth_package, sizeof(g_auth_package));
+    // 初始化 FURenderKit
+    [FURenderKit setupWithSetupConfig:setupConfig];
     
+    // 加载人脸 AI 模型
+    NSString *faceAIPath = [[NSBundle mainBundle] pathForResource:@"ai_face_processor" ofType:@"bundle"];
+    [FUAIKit loadAIModeWithAIType:FUAITYPE_FACEPROCESSOR dataPath:faceAIPath];
+    
+    // 加载身体 AI 模型
+    NSString *bodyAIPath = [[NSBundle mainBundle] pathForResource:@"ai_human_processor" ofType:@"bundle"];
+    [FUAIKit loadAIModeWithAIType:FUAITYPE_HUMAN_PROCESSOR dataPath:bodyAIPath];
+    
+    [FUAIKit shareKit].maxTrackFaces = 4;
+    
+    // 设置人脸算法质量
+    [FUAIKit shareKit].faceProcessorFaceLandmarkQuality = [FURenderKit devicePerformanceLevel] == FUDevicePerformanceLevelHigh ? FUFaceProcessorFaceLandmarkQualityHigh : FUFaceProcessorFaceLandmarkQualityMedium;
+    
+    // 设置小脸检测是否打开
+    [FUAIKit shareKit].faceProcessorDetectSmallFace = [FURenderKit devicePerformanceLevel] == FUDevicePerformanceLevelHigh;
+    
+    // 性能测试初始化
+    [[FUTestRecorder shareRecorder] setupRecord];
+    
+    // 美颜默认加载
+    [self loadDefaultBeauty];
 }
 
+- (void)addDemoViewToView:(UIView *)view originY:(CGFloat)originY {
+    NSAssert(view, @"目标控制器不能为空");
+    self.targetView = view;
+    self.demoOriginY = originY;
+    
+    [view addSubview:self.bottomBar];
+    [view addSubview:self.skinView];
+    [view addSubview:self.shapeView];
+    [view addSubview:self.filterView];
+    [view addSubview:self.stickerView];
+    [view addSubview:self.makeupView];
+    [view addSubview:self.bodyView];
+    
+    [view addSubview:self.trackTipLabel];
+    [view addSubview:self.renderSwitch];
+}
+
+- (void)checkAITrackedResult {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.showingView == self.bodyView) {
+            self.trackTipLabel.hidden = [FUAIKit aiHumanProcessorNums] > 0;
+            self.trackTipLabel.text = FULocalizedString(@"未检测到人体");
+        } else {
+            self.trackTipLabel.hidden = [FUAIKit aiFaceProcessorNums] > 0;
+            self.trackTipLabel.text = FULocalizedString(@"未检测到人脸");
+        }
+    });
+}
+
+#pragma mark - Private methods
 
 /// 显示功能视图
 /// @param functionView 功能视图
-- (void)showFunctionView:(FUFunctionView *)functionView {
+- (void)showFunctionView:(UIView *)functionView {
     if (!functionView) {
         return;
     }
@@ -199,7 +149,7 @@
 /// 隐藏功能视图
 /// @param functionView 功能视图
 /// @param animated 是否需要动画（切换功能时先隐藏当前显示的视图不需要动画，直接隐藏时需要动画）
-- (void)hideFunctionView:(FUFunctionView *)functionView animated:(BOOL)animated {
+- (void)hideFunctionView:(UIView *)functionView animated:(BOOL)animated {
     if (!functionView) {
         return;
     }
@@ -219,174 +169,137 @@
 
 #pragma mark - Event response
 - (void)renderSwitchAction:(UISwitch *)sender {
-    if (self.showingModuleType == FUModuleTypeBeautySkin || self.showingModuleType == FUModuleTypeBeautyShape) {
-        // 美肤和美型共用一个开关
-        if (sender.isOn) {
-            [self.viewModels[FUModuleTypeBeautySkin] startRender];
-            [self.viewModels[FUModuleTypeBeautyShape] startRender];
-        } else {
-            [self.viewModels[FUModuleTypeBeautySkin] stopRender];
-            [self.viewModels[FUModuleTypeBeautyShape] stopRender];
-        }
-    } else {
-        if (sender.isOn) {
-            [self.viewModels[self.showingModuleType] startRender];
-        } else {
-            [self.viewModels[self.showingModuleType] stopRender];
-        }
-    }
-}
-
-#pragma mark - FUManagerProtocol
-- (void)faceUnityManagerCheckAI {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSString *tipString = self.viewModels[self.showingModuleType].model.tip;
-        if (self.viewModels[self.showingModuleType].model.type == FUModuleTypeBeautyBody) {
-            self.trackTipLabel.hidden = [FUAIKit aiHumanProcessorNums] > 0;
-        } else {
-            self.trackTipLabel.hidden = [FUAIKit shareKit].trackedFacesCount > 0;
-        }
-        self.trackTipLabel.text = tipString;
-    });
+    self.shouldRender = sender.isOn;
 }
 
 #pragma mark - FUSegmentBarDelegate
+
 - (void)segmentBar:(FUSegmentBar *)segmentBar didSelectItemAtIndex:(NSUInteger)index {
-    [self resolveModuleOperations:index];
-}
-
-#pragma mark - FUFunctionViewDelegate
-- (void)functionView:(FUFunctionView *)functionView didSelectFunctionAtIndex:(NSInteger)index {
-    if (functionView.viewModel.isNeedSlider) {
-        if (functionView.slider.hidden) {
-            self.renderSwitch.frame = CGRectMake(5, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight - 10, 50, 30);
-        } else {
-            self.renderSwitch.frame = CGRectMake(5, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight - 40, 50, 30);
-        }
-    }
-    FUViewModel *viewModel = functionView.viewModel;
-    viewModel.selectedIndex = index;
-    if (!viewModel.isRendering) {
-        [viewModel startRender];
-    }
-    [viewModel updateData:viewModel.model.moduleData[index]];
-}
-
-- (void)functionView:(FUFunctionView *)functionView didChangeSliderValue:(CGFloat)value {
-    NSLog(@"%@", @(value));
-    FUSubModel *subModel = functionView.viewModel.model.moduleData[functionView.viewModel.selectedIndex];
-    subModel.currentValue = value * subModel.ratio;
-    [functionView.viewModel updateData:subModel];
-}
-
-- (void)functionViewDidEndSlide:(FUFunctionView *)functionView {
-    switch (functionView.viewModel.model.type) {
+    [FUAIKit shareKit].maxTrackFaces = index == FUModuleTypeBody ? 1 : 4;
+    UIView *needShowView = nil;
+    switch (index) {
         case FUModuleTypeBeautySkin:{
-            [self.skinView refreshSubviews];
+            needShowView = self.skinView;
         }
             break;
         case FUModuleTypeBeautyShape:{
-            [self.shapeView refreshSubviews];
+            needShowView = self.shapeView;
         }
             break;
-        case FUModuleTypeBeautyBody:{
-            [self.bodyView refreshSubviews];
+        case FUModuleTypeBeautyFilter:{
+            needShowView = self.filterView;
         }
             break;
-        default:
+        case FUModuleTypeSticker:{
+            needShowView = self.stickerView;
+        }
+            break;
+        case FUModuleTypeMakeup:{
+            needShowView = self.makeupView;
+        }
+            break;
+        case FUModuleTypeBody:{
+            if (![FURenderKit shareRenderKit].bodyBeauty) {
+                // 加载默认美体
+                [FUDemoManager loadDefaultBody];
+            }
+            needShowView = self.bodyView;
+        }
             break;
     }
-}
-
-- (void)functionViewDidClickRecover:(FUFunctionView *)functionView {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"是否将所有参数恢复到默认值" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-    }];
-    [cancelAction setValue:[UIColor colorWithRed:44/255.0 green:46/255.0 blue:48/255.0 alpha:1.0] forKey:@"titleTextColor"];
-    
-    UIAlertAction *certainAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        FUViewModel *viewModel = functionView.viewModel;
-        [viewModel recover];
-        [functionView refreshSubviews];
-    }];
-
-    [certainAction setValue:[UIColor colorWithRed:31/255.0 green:178/255.0 blue:255/255.0 alpha:1.0] forKey:@"titleTextColor"];
-    
-    [alert addAction:cancelAction];
-    [alert addAction:certainAction];
-    
-    [self.targetController presentViewController:alert animated:YES completion:^{
-        
-    }];
-    
-    
+    if (needShowView && needShowView.hidden) {
+        if (self.showingView) {
+            // 先隐藏当前功能视图
+            [self hideFunctionView:self.showingView animated:NO];
+        }
+        [self showFunctionView:needShowView];
+        self.renderSwitch.transform = CGAffineTransformMakeTranslation(0, -CGRectGetHeight(needShowView.frame));
+        self.renderSwitch.hidden = NO;
+        self.showingView = needShowView;
+    }
 }
 
 #pragma mark - Getters
 - (FUSegmentBar *)bottomBar {
     if (!_bottomBar) {
-        NSMutableArray *segments = [[NSMutableArray alloc] init];
-        for (FUViewModel *viewModel in self.viewModels) {
-            [segments addObject:viewModel.model.name];
-        }
-        _bottomBar = [[FUSegmentBar alloc] initWithFrame:CGRectMake(0, self.demoOriginY, CGRectGetWidth(self.targetController.view.bounds), 49) titles:[segments copy] configuration:[FUSegmentBarConfigurations new]];
+        _bottomBar = [[FUSegmentBar alloc] initWithFrame:CGRectMake(0, self.demoOriginY, CGRectGetWidth(self.targetView.bounds), 49) titles:@[FULocalizedString(@"美肤"), FULocalizedString(@"美型"), FULocalizedString(@"滤镜"), FULocalizedString(@"贴纸"),  FULocalizedString(@"美妆"), FULocalizedString(@"美体")] configuration:[FUSegmentBarConfigurations new]];
         _bottomBar.delegate = self;
     }
     return _bottomBar;
 }
 
-- (FUBeautyFunctionView *)skinView {
+- (FUBeautySkinView *)skinView {
     if (!_skinView) {
-        _skinView = [[FUBeautyFunctionView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight, CGRectGetWidth(self.targetController.view.bounds), FUFunctionViewHeight) viewModel:self.viewModels[FUModuleTypeBeautySkin]];
-        _skinView.delegate = self;
+        _skinView = [[FUBeautySkinView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight)];
+        _skinView.layer.anchorPoint = CGPointMake(0.5, 1);
+        // 设置了anchorPoint需要重新设置frame
+        _skinView.frame = CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight);
+        // 默认隐藏
+        [self hideFunctionView:_skinView animated:NO];
     }
     return _skinView;
 }
 
-- (FUBeautyFunctionView *)shapeView {
+- (FUBeautyShapeView *)shapeView {
     if (!_shapeView) {
-        _shapeView = [[FUBeautyFunctionView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight, CGRectGetWidth(self.targetController.view.bounds), FUFunctionViewHeight) viewModel:self.viewModels[FUModuleTypeBeautyShape]];
-        _shapeView.delegate = self;
+        _shapeView = [[FUBeautyShapeView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight)];
+        _shapeView.layer.anchorPoint = CGPointMake(0.5, 1);
+        _shapeView.frame = CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight);
+        // 默认隐藏
+        [self hideFunctionView:_shapeView animated:NO];
     }
     return _shapeView;
 }
 
-- (FUOthersFunctionView *)filterView {
+- (FUBeautyFilterView *)filterView {
     if (!_filterView) {
-        _filterView = [[FUOthersFunctionView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight, CGRectGetWidth(self.targetController.view.bounds), FUFunctionViewHeight) viewModel:self.viewModels[FUModuleTypeFilter]];
-        _filterView.delegate = self;
+        _filterView = [[FUBeautyFilterView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight)];
+        _filterView.layer.anchorPoint = CGPointMake(0.5, 1);
+        _filterView.frame = CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight);
+        // 默认隐藏
+        [self hideFunctionView:_filterView animated:NO];
     }
     return _filterView;
 }
 
-- (FUOthersFunctionView *)stickerView {
+- (FUStickerView *)stickerView {
     if (!_stickerView) {
-        _stickerView = [[FUOthersFunctionView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight, CGRectGetWidth(self.targetController.view.bounds), FUFunctionViewHeight) viewModel:self.viewModels[FUModuleTypeSticker]];
-        _stickerView.delegate = self;
+        _stickerView = [[FUStickerView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight)];
+        _stickerView.layer.anchorPoint = CGPointMake(0.5, 1);
+        _stickerView.frame = CGRectMake(0, self.demoOriginY - FUFunctionViewHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight);
+        // 默认隐藏
+        [self hideFunctionView:_stickerView animated:NO];
     }
     return _stickerView;
 }
 
-- (FUOthersFunctionView *)makeupView {
+- (FUMakeupView *)makeupView {
     if (!_makeupView) {
-        _makeupView = [[FUOthersFunctionView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight, CGRectGetWidth(self.targetController.view.bounds), FUFunctionViewHeight) viewModel:self.viewModels[FUModuleTypeMakeup]];
-        _makeupView.delegate = self;
+        _makeupView = [[FUMakeupView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight)];
+        _makeupView.layer.anchorPoint = CGPointMake(0.5, 1);
+        _makeupView.frame = CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight);
+        // 默认隐藏
+        [self hideFunctionView:_makeupView animated:NO];
     }
     return _makeupView;
 }
 
-- (FUBeautyFunctionView *)bodyView {
+- (FUBodyView *)bodyView {
     if (!_bodyView) {
-        _bodyView = [[FUBeautyFunctionView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight, CGRectGetWidth(self.targetController.view.bounds), FUFunctionViewHeight) viewModel:self.viewModels[FUModuleTypeBeautyBody]];
-        _bodyView.delegate = self;
+        _bodyView = [[FUBodyView alloc] initWithFrame:CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight)];
+        _bodyView.layer.anchorPoint = CGPointMake(0.5, 1);
+        _bodyView.frame = CGRectMake(0, self.demoOriginY - FUFunctionViewHeight - FUFunctionSliderHeight, CGRectGetWidth(self.targetView.bounds), FUFunctionViewHeight + FUFunctionSliderHeight);
+        // 默认隐藏
+        [self hideFunctionView:_bodyView animated:NO];
     }
     return _bodyView;
 }
 
 - (UISwitch *)renderSwitch {
     if (!_renderSwitch) {
-        _renderSwitch = [[UISwitch alloc] init];
+        _renderSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(10, CGRectGetMinY(self.bottomBar.frame) - 40, 80, 30)];
         [_renderSwitch addTarget:self action:@selector(renderSwitchAction:) forControlEvents:UIControlEventValueChanged];
+        _renderSwitch.on = YES;
         _renderSwitch.hidden = YES;
     }
     return _renderSwitch;
@@ -394,7 +307,7 @@
 
 - (UILabel *)trackTipLabel {
     if (!_trackTipLabel) {
-        _trackTipLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMidX(self.targetController.view.frame) - 70, CGRectGetMidY(self.targetController.view.frame) - 12, 140, 24)];
+        _trackTipLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMidX(self.targetView.frame) - 70, CGRectGetMidY(self.targetView.frame) - 12, 140, 24)];
         _trackTipLabel.textColor = [UIColor whiteColor];
         _trackTipLabel.font = [UIFont systemFontOfSize:17];
         _trackTipLabel.textAlignment = NSTextAlignmentCenter;
@@ -403,61 +316,74 @@
     return _trackTipLabel;
 }
 
-- (NSArray<FUViewModel *> *)viewModels {
-    if (!_viewModels) {
-        _viewModels = [@[self.beautySkinViewModel, self.beautyShapeViewModel, self.filterViewModel, self.stickerViewModel, self.makeupViewModel, self.beautyBodyViewModel] copy];
-    }
-    return _viewModels;
+- (BOOL)shouldRender {
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    __block BOOL should = YES;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        should = self.renderSwitch.isOn;
+        dispatch_semaphore_signal(semaphore);
+    });
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    return should;
 }
 
-- (NSArray<FUFunctionView *> *)moduleViews {
-    if (!_moduleViews) {
-        _moduleViews = [@[self.skinView, self.shapeView, self.filterView, self.stickerView, self.makeupView, self.bodyView] copy];
-    }
-    return _moduleViews;
+#pragma mark - Class methods
+
++ (void)destory {
+    [FURenderKit destroy];
+    onceToken = 0;
+    demoManager = nil;
 }
 
-- (FUBeautySkinViewModel *)beautySkinViewModel {
-    if (!_beautySkinViewModel) {
-        _beautySkinViewModel = [[FUBeautySkinViewModel alloc] initWithSelectedIndex:-1 needSlider:YES];
-    }
-    return _beautySkinViewModel;
++ (void)resetTrackedResult {
+    [FUAIKit resetTrackedResult];
 }
 
-- (FUBeautyShapeViewModel *)beautyShapeViewModel {
-    if (!_beautyShapeViewModel) {
-        _beautyShapeViewModel = [[FUBeautyShapeViewModel alloc] initWithSelectedIndex:-1 needSlider:YES];
++ (void)updateBeautyBlurEffect {
+    if (![FURenderKit shareRenderKit].beauty || ![FURenderKit shareRenderKit].beauty.enable) {
+        return;
     }
-    return _beautyShapeViewModel;
+    if ([FURenderKit devicePerformanceLevel] == FUDevicePerformanceLevelHigh) {
+        // 根据人脸置信度设置不同磨皮效果
+        CGFloat score = [FUAIKit fuFaceProcessorGetConfidenceScore:0];
+        if (score > 0.95) {
+            [FURenderKit shareRenderKit].beauty.blurType = 3;
+            [FURenderKit shareRenderKit].beauty.blurUseMask = YES;
+        } else {
+            [FURenderKit shareRenderKit].beauty.blurType = 2;
+            [FURenderKit shareRenderKit].beauty.blurUseMask = NO;
+        }
+    } else {
+        // 设置精细磨皮效果
+        [FURenderKit shareRenderKit].beauty.blurType = 2;
+        [FURenderKit shareRenderKit].beauty.blurUseMask = NO;
+    }
 }
 
-- (FUFilterViewModel *)filterViewModel {
-    if (!_filterViewModel) {
-        _filterViewModel = [[FUFilterViewModel alloc] initWithSelectedIndex:1 needSlider:YES];
+/// 加载默认美颜
++ (void)loadDefaultBeauty {
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"face_beautification" ofType:@"bundle"];
+    FUBeauty *beauty = [[FUBeauty alloc] initWithPath:path name:@"FUBeauty"];
+    beauty.heavyBlur = 0;
+    // 默认均匀磨皮
+    beauty.blurType = 3;
+    // 默认精细变形
+    beauty.faceShape = 4;
+    // 高性能设备设置去黑眼圈、去法令纹、大眼、嘴型最新效果
+    if ([FURenderKit devicePerformanceLevel] == FUDevicePerformanceLevelHigh) {
+        [beauty addPropertyMode:FUBeautyPropertyMode2 forKey:FUModeKeyRemovePouchStrength];
+        [beauty addPropertyMode:FUBeautyPropertyMode2 forKey:FUModeKeyRemoveNasolabialFoldsStrength];
+        [beauty addPropertyMode:FUBeautyPropertyMode3 forKey:FUModeKeyEyeEnlarging];
+        [beauty addPropertyMode:FUBeautyPropertyMode3 forKey:FUModeKeyIntensityMouth];
     }
-    return _filterViewModel;
+    [FURenderKit shareRenderKit].beauty = beauty;
 }
 
-- (FUStickerViewModel *)stickerViewModel {
-    if (!_stickerViewModel) {
-        _stickerViewModel = [[FUStickerViewModel alloc] initWithSelectedIndex:0 needSlider:NO];
-    }
-    return _stickerViewModel;
+/// 加载默认美体
++ (void)loadDefaultBody {
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"body_slim" ofType:@"bundle"];
+    FUBodyBeauty *bodyBeauty = [[FUBodyBeauty alloc] initWithPath:filePath name:@"body_slim"];
+    [FURenderKit shareRenderKit].bodyBeauty = bodyBeauty;
 }
-
-- (FUMakeupViewModel *)makeupViewModel {
-    if (!_makeupViewModel) {
-        _makeupViewModel = [[FUMakeupViewModel alloc] initWithSelectedIndex:0 needSlider:YES];
-    }
-    return _makeupViewModel;
-}
-
-- (FUBeautyBodyViewModel *)beautyBodyViewModel {
-    if (!_beautyBodyViewModel) {
-        _beautyBodyViewModel = [[FUBeautyBodyViewModel alloc] initWithSelectedIndex:-1 needSlider:YES];
-    }
-    return _beautyBodyViewModel;
-}
-
 
 @end

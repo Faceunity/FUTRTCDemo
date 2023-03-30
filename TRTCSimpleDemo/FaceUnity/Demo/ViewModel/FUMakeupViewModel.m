@@ -7,77 +7,93 @@
 
 #import "FUMakeupViewModel.h"
 #import "FUMakeupModel.h"
+#import "FUDefines.h"
+
+#import <FURenderKit/FURenderKit.h>
 
 @interface FUMakeupViewModel ()
 
-@property (nonatomic, strong) FUMakeup *makeup;
+@property (nonatomic, copy) NSArray<FUMakeupModel *> *combinationMakeups;
 
-@property (nonatomic, copy) NSString *currentMakeup;
-
+@property (nonatomic, assign) NSInteger selectedIndex;
 
 @end
 
 @implementation FUMakeupViewModel
 
-- (instancetype)initWithSelectedIndex:(NSInteger)selectedIndex needSlider:(BOOL)isNeedSlider {
-    self = [super initWithSelectedIndex:selectedIndex needSlider:isNeedSlider];
+- (instancetype)init {
+    self = [super init];
     if (self) {
-        self.model = [[FUMakeupModel alloc] init];
+        _selectedIndex = 0;
     }
     return self;
 }
 
-#pragma mark - Override methods
-- (void)startRender {
-    [super startRender];
-    [FURenderKit shareRenderKit].makeup = self.makeup;
-    [FURenderKit shareRenderKit].makeup.enable = YES;
+- (void)selectCombinationMakeupAtIndex:(NSInteger)index {
+    if (index == 0) {
+        // 卸妆
+        [FURenderKit shareRenderKit].makeup = nil;
+        self.selectedIndex = 0;
+        return;
+    }
+    self.selectedIndex = index;
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"face_makeup" ofType:@"bundle"];
+    if (![FURenderKit shareRenderKit].makeup) {
+        FUMakeup *makeup = [[FUMakeup alloc] initWithPath:path name:@"makeup"];
+        // 高端机打开全脸分割
+        makeup.makeupSegmentation = [FURenderKit devicePerformanceLevel] == FUDevicePerformanceLevelHigh;
+        [FURenderKit shareRenderKit].makeup = makeup;
+    }
+    FUMakeupModel *model = self.combinationMakeups[index];
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:model.bundleName ofType:@"bundle"];
+    FUItem *item = [[FUItem alloc] initWithPath:bundlePath name:model.bundleName];
+    [[FURenderKit shareRenderKit].makeup updateMakeupPackage:item needCleanSubItem:NO];
+    [FURenderKit shareRenderKit].makeup.intensity = model.value;
 }
 
-- (void)stopRender {
-    [super stopRender];
-    [FURenderKit shareRenderKit].makeup.enable = NO;
-    [FURenderKit shareRenderKit].makeup = nil;
-    _makeup = nil;
-    _currentMakeup = nil;
+- (NSString *)combinationMakeupNameAtIndex:(NSUInteger)index {
+    FUMakeupModel *model = self.combinationMakeups[index];
+    return FULocalizedString(model.name);
 }
 
-- (void)updateData:(FUSubModel *)subModel {
-    if (!subModel) {
-        NSLog(@"FaceUnity：美妆数据为空");
+- (UIImage *)combinationMakeupIconAtIndex:(NSUInteger)index {
+    FUMakeupModel *model = self.combinationMakeups[index];
+    return [UIImage imageNamed:model.icon];
+}
+
+
+#pragma mark - Setters
+
+- (void)setSelectedMakeupValue:(double)selectedMakeupValue {
+    if (self.selectedIndex < 0 || self.selectedIndex >= self.combinationMakeups.count) {
         return;
     }
-    
-    if ([subModel.imageName isEqualToString:@"remove"]) {
-        // 选中取消美妆
-        [self stopRender];
-        return;
-    }
-    
-    if ([subModel.imageName isEqualToString:self.currentMakeup]) {
-        // 调节当前美妆程度
-        self.makeup.intensity = subModel.currentValue;
-        return;
-    }
-    NSString *path = [[NSBundle mainBundle] pathForResource:subModel.imageName ofType:@"bundle"];
-    if (!path) {
-        NSLog(@"FaceUnity：找不到美妆路径");
-        return;
-    }
-    FUItem *makeupItem = [[FUItem alloc] initWithPath:path name:subModel.imageName];
-    [self.makeup updateMakeupPackage:makeupItem needCleanSubItem:NO];
-    self.makeup.intensity = subModel.currentValue;
-    self.currentMakeup = subModel.imageName;
+    FUMakeupModel *model = self.combinationMakeups[self.selectedIndex];
+    model.value = selectedMakeupValue;
+    [FURenderKit shareRenderKit].makeup.intensity = model.value;
 }
 
 #pragma mark - Getters
-- (FUMakeup *)makeup {
-    if (!_makeup) {
-        _makeup = [[FUMakeup alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"face_makeup" ofType:@"bundle"] name:@"face_makeup"];
-        _makeup.isMakeupOn = NO;
-        _makeup.makeupSegmentation = [FURenderKit devicePerformanceLevel] == FUDevicePerformanceLevelHigh;
+
+- (NSArray<FUMakeupModel *> *)combinationMakeups {
+    if (!_combinationMakeups) {
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        NSString *path = [bundle pathForResource:@"combination_makeups" ofType:@"json"];
+        NSArray<NSDictionary *> *data = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:path] options:NSJSONReadingMutableContainers error:nil];
+        NSMutableArray *makeups = [[NSMutableArray alloc] init];
+        for (NSDictionary *dictionary in data) {
+            FUMakeupModel *model = [[FUMakeupModel alloc] init];
+            [model setValuesForKeysWithDictionary:dictionary];
+            [makeups addObject:model];
+        }
+        _combinationMakeups = [makeups copy];
     }
-    return _makeup;
+    return _combinationMakeups;
 }
+
+- (double)selectedMakeupValue {
+    return self.combinationMakeups[self.selectedIndex].value;
+}
+
 
 @end

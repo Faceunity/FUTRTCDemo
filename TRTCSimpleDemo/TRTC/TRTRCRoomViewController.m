@@ -13,9 +13,8 @@
 #import "NSString+Common.h"
 #import <Masonry/Masonry.h>
 
-/**faceU */
+/**faceUnity */
 #import "FUDemoManager.h"
-#import "FUTestRecorder.h"
 
 #import <FURenderKit/FUGLContext.h>
 
@@ -28,8 +27,6 @@
 
 // 使用纹理渲染时,记录当前glcontext
 @property(nonatomic, strong) EAGLContext *mContext;
-
-@property (nonatomic, strong) FUDemoManager *demoManager;
 
 @end
 
@@ -48,7 +45,7 @@
 //
     //buffer 渲染时 setLocalVideoRenderDelegate
     //在调用fusetup初始化时,shouldCreateContext:YES
-    [[FUManager shareManager] destoryItems];
+    [FUDemoManager destory];
     
     [TRTCCloud destroySharedIntance];
     //NSLog(@"%s",__func__);
@@ -89,13 +86,8 @@
     [self setupTRTC];
     [self setupUI];
     
-    
-    CGFloat safeAreaBottom = 0;
-    if (@available(iOS 11.0, *)) {
-        safeAreaBottom = [UIApplication sharedApplication].delegate.window.safeAreaInsets.bottom;
-    }
-    
-    self.demoManager = [[FUDemoManager alloc] initWithTargetController:self originY:CGRectGetHeight(self.view.frame) - FUBottomBarHeight - safeAreaBottom - 60];
+    [FUDemoManager setupFUSDK];
+    [[FUDemoManager shared] addDemoViewToView:self.view originY:CGRectGetHeight(self.view.frame) - FUBottomBarHeight - FUSafaAreaBottomInsets() - 60];
     
     [self enterRoom];
     
@@ -312,7 +304,7 @@
     self.isFrontCamera = sender.selected;
     sender.selected = !sender.selected;
     [[self.trtc getDeviceManager] switchCamera:self.isFrontCamera];
-    [[FUManager shareManager] onCameraChange];
+    [FUDemoManager resetTrackedResult];
     
 }
 
@@ -489,12 +481,11 @@
     if ([FUGLContext shareGLContext].currentGLContext != _mContext) {
         [[FUGLContext shareGLContext] setCustomGLContext: _mContext];
     }
+    [[FUDemoManager shared] checkAITrackedResult];
     
-    [self.demoManager faceUnityManagerCheckAI];
-    
-    if ([FUManager shareManager].isRender) {
+    if ([FUDemoManager shared].shouldRender) {
         [[FUTestRecorder shareRecorder] processFrameWithLog];
-        [[FUManager shareManager] updateBeautyBlurEffect];
+        [FUDemoManager updateBeautyBlurEffect];
         FURenderInput *input = [[FURenderInput alloc] init];
         
         // 根据输入纹理调整参数设置
@@ -512,12 +503,10 @@
         input.renderConfig.textureTransform = CCROT0_FLIPVERTICAL;
         FURenderOutput *output = [[FURenderKit shareRenderKit] renderWithInput:input];
         dstFrame.textureId = output.texture.ID;
-        if (output.texture.ID != 0) {
-            return output.texture.ID;;
-        }
+    } else {
+        dstFrame.textureId = srcFrame.textureId;
     }
-    return 0;
+    return dstFrame.textureId;
 }
-
 
 @end

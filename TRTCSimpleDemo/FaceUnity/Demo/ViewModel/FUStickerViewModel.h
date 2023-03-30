@@ -1,16 +1,24 @@
 //
 //  FUStickerViewModel.h
-//  FUDemo
+//  FURTCDemo
 //
-//  Created by 项林平 on 2021/6/15.
-//  贴纸功能模块
+//  Created by 项林平 on 2023/2/6.
 //
 
-#import "FUViewModel.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+@class FUStickerModel;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FUStickerViewModel : FUViewModel
+@interface FUStickerViewModel : NSObject
+
+@property (nonatomic, copy, readonly) NSArray<FUStickerModel *> *stickers;
+/// 选中滤镜索引
+@property (nonatomic, assign) NSInteger selectedIndex;
+
+- (UIImage *)stickerIconAtIndex:(NSUInteger)index;
 
 @end
 
