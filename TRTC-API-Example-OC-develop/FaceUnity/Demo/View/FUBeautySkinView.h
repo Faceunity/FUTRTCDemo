@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) UIImageView *imageView;
 
 @property (nonatomic, strong, readonly) UILabel *textLabel;
+/// 是否允许选择
+@property (nonatomic, assign) BOOL disabled;
 
 @property (nonatomic, assign) double currentValue;
 

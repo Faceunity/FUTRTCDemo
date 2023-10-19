@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) BOOL isDefaultValue;
 /// 当前选中索引，默认为-1
 @property (nonatomic, assign) NSInteger selectedIndex;
-/// 美型属性需要根据高低端机适配
+/// 需要根据高低端机适配
 @property (nonatomic, assign) FUDevicePerformanceLevel performanceLevel;
 
 /// 设置单项美型值

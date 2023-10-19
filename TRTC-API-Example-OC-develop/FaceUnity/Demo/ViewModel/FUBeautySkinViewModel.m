@@ -21,6 +21,7 @@
     if (self) {
         self.beautySkins = [self defaultSkins];
         _selectedIndex = -1;
+        self.performanceLevel = [FURenderKit devicePerformanceLevel];
         
         [self setAllSkinValues];
     }
@@ -81,6 +82,12 @@
             break;
         case FUBeautySkinRemoveNasolabialFoldsStrength:
             [FURenderKit shareRenderKit].beauty.removeNasolabialFoldsStrength = value;
+            break;
+        case FUBeautySkinAntiAcneSpot:
+            [FURenderKit shareRenderKit].beauty.antiAcneSpot = value;
+            break;
+        case FUBeautySkinClarity:
+            [FURenderKit shareRenderKit].beauty.clarity = value;
             break;
     }
 }

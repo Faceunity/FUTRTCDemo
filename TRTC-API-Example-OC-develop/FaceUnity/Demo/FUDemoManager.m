@@ -316,17 +316,6 @@ static dispatch_once_t onceToken;
     return _trackTipLabel;
 }
 
-- (BOOL)shouldRender {
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    __block BOOL should = YES;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        should = self.renderSwitch.isOn;
-        dispatch_semaphore_signal(semaphore);
-    });
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    return should;
-}
-
 #pragma mark - Class methods
 
 + (void)destory {
