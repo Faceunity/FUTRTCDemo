@@ -203,9 +203,11 @@ static NSString * const kFUSegmentCellIdentifierKey = @"FUSegmentCellIdentifier"
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.segmentTitleLabel];
-        NSLayoutConstraint *titleLabelCenterX = [NSLayoutConstraint constraintWithItem:self.segmentTitleLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-        NSLayoutConstraint *titleLabelCenterY = [NSLayoutConstraint constraintWithItem:self.segmentTitleLabel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
-        [self.contentView addConstraints:@[titleLabelCenterX, titleLabelCenterY]];
+        NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.segmentTitleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+        NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.segmentTitleLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
+        NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:self.segmentTitleLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeading multiplier:1 constant:0];
+        NSLayoutConstraint *trailing = [NSLayoutConstraint constraintWithItem:self.segmentTitleLabel attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0];
+        [self.contentView addConstraints:@[top, bottom, leading, trailing]];
     }
     return self;
 }
@@ -229,6 +231,7 @@ static NSString * const kFUSegmentCellIdentifierKey = @"FUSegmentCellIdentifier"
         _segmentTitleLabel.textColor = [UIColor whiteColor];
         _segmentTitleLabel.font = [UIFont systemFontOfSize:13];
         _segmentTitleLabel.textAlignment = NSTextAlignmentCenter;
+        _segmentTitleLabel.adjustsFontSizeToFitWidth = YES;
         _segmentTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     }
     return _segmentTitleLabel;

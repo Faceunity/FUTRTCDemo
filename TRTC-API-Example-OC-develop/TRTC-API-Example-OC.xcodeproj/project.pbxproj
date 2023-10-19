@@ -125,6 +125,8 @@
 		88A2C84726706305006FC026 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 47ECB9882626867C00201FCB /* libc++.tbd */; };
 		D4FD8E4169AB8376B5451CDC /* Pods_TXReplayKit_Screen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C99BF07371D8A29601F2FC64 /* Pods_TXReplayKit_Screen.framework */; };
 		D6D63B7025D86CFC1006B19E /* Pods_TRTC_API_Example_OC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B2CC51BDD884255109D5F7 /* Pods_TRTC_API_Example_OC.framework */; };
+		E34024362AB7EF9E00F0A794 /* FUSegmentBar.m in Sources */ = {isa = PBXBuildFile; fileRef = E34024342AB7EF9E00F0A794 /* FUSegmentBar.m */; };
+		E34024372AB7EF9E00F0A794 /* FUSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E34024352AB7EF9E00F0A794 /* FUSegmentedControl.m */; };
 		E37DA0F82A60FE0600AC7BF4 /* FUBeautyFilterViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E37DA0842A60FE0500AC7BF4 /* FUBeautyFilterViewModel.m */; };
 		E37DA0F92A60FE0600AC7BF4 /* FUBeautySkinViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E37DA0852A60FE0500AC7BF4 /* FUBeautySkinViewModel.m */; };
 		E37DA0FA2A60FE0600AC7BF4 /* FUBeautyShapeViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E37DA0872A60FE0500AC7BF4 /* FUBeautyShapeViewModel.m */; };
@@ -150,7 +152,6 @@
 		E37DA10E2A60FE0600AC7BF4 /* FUBeautyShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = E37DA0B62A60FE0500AC7BF4 /* FUBeautyShapeView.m */; };
 		E37DA10F2A60FE0600AC7BF4 /* FUTipHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = E37DA0B92A60FE0500AC7BF4 /* FUTipHUD.m */; };
 		E37DA1102A60FE0600AC7BF4 /* FUBodyView.m in Sources */ = {isa = PBXBuildFile; fileRef = E37DA0BA2A60FE0500AC7BF4 /* FUBodyView.m */; };
-		E37DA1112A60FE0600AC7BF4 /* FUSegmentBar.m in Sources */ = {isa = PBXBuildFile; fileRef = E37DA0BD2A60FE0500AC7BF4 /* FUSegmentBar.m */; };
 		E37DA1122A60FE0600AC7BF4 /* FUSquareButton.m in Sources */ = {isa = PBXBuildFile; fileRef = E37DA0C02A60FE0600AC7BF4 /* FUSquareButton.m */; };
 		E37DA1132A60FE0600AC7BF4 /* beauty_filter.json in Resources */ = {isa = PBXBuildFile; fileRef = E37DA0C52A60FE0600AC7BF4 /* beauty_filter.json */; };
 		E37DA1142A60FE0600AC7BF4 /* beauty_shape.json in Resources */ = {isa = PBXBuildFile; fileRef = E37DA0C62A60FE0600AC7BF4 /* beauty_shape.json */; };
@@ -411,6 +412,10 @@
 		88BC38A5284471F300814931 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		C99BF07371D8A29601F2FC64 /* Pods_TXReplayKit_Screen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TXReplayKit_Screen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B2CC51BDD884255109D5F7 /* Pods_TRTC_API_Example_OC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TRTC_API_Example_OC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E34024322AB7EF9E00F0A794 /* FUSegmentBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUSegmentBar.h; sourceTree = "<group>"; };
+		E34024332AB7EF9E00F0A794 /* FUSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUSegmentedControl.h; sourceTree = "<group>"; };
+		E34024342AB7EF9E00F0A794 /* FUSegmentBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUSegmentBar.m; sourceTree = "<group>"; };
+		E34024352AB7EF9E00F0A794 /* FUSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUSegmentedControl.m; sourceTree = "<group>"; };
 		E37DA0842A60FE0500AC7BF4 /* FUBeautyFilterViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUBeautyFilterViewModel.m; sourceTree = "<group>"; };
 		E37DA0852A60FE0500AC7BF4 /* FUBeautySkinViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUBeautySkinViewModel.m; sourceTree = "<group>"; };
 		E37DA0862A60FE0500AC7BF4 /* FUBodyViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUBodyViewModel.h; sourceTree = "<group>"; };
@@ -460,8 +465,6 @@
 		E37DA0B82A60FE0500AC7BF4 /* FUTipHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUTipHUD.h; sourceTree = "<group>"; };
 		E37DA0B92A60FE0500AC7BF4 /* FUTipHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUTipHUD.m; sourceTree = "<group>"; };
 		E37DA0BA2A60FE0500AC7BF4 /* FUBodyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUBodyView.m; sourceTree = "<group>"; };
-		E37DA0BC2A60FE0500AC7BF4 /* FUSegmentBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUSegmentBar.h; sourceTree = "<group>"; };
-		E37DA0BD2A60FE0500AC7BF4 /* FUSegmentBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUSegmentBar.m; sourceTree = "<group>"; };
 		E37DA0BE2A60FE0500AC7BF4 /* FUBeautySkinView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUBeautySkinView.h; sourceTree = "<group>"; };
 		E37DA0C02A60FE0600AC7BF4 /* FUSquareButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUSquareButton.m; sourceTree = "<group>"; };
 		E37DA0C12A60FE0600AC7BF4 /* FUSquareButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUSquareButton.h; sourceTree = "<group>"; };
@@ -1063,6 +1066,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		E34024312AB7EF9E00F0A794 /* FUSegment */ = {
+			isa = PBXGroup;
+			children = (
+				E34024322AB7EF9E00F0A794 /* FUSegmentBar.h */,
+				E34024332AB7EF9E00F0A794 /* FUSegmentedControl.h */,
+				E34024342AB7EF9E00F0A794 /* FUSegmentBar.m */,
+				E34024352AB7EF9E00F0A794 /* FUSegmentedControl.m */,
+			);
+			path = FUSegment;
+			sourceTree = "<group>";
+		};
 		E37DA0812A60FE0500AC7BF4 /* FaceUnity */ = {
 			isa = PBXGroup;
 			children = (
@@ -1129,6 +1143,7 @@
 		E37DA0A12A60FE0500AC7BF4 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E34024312AB7EF9E00F0A794 /* FUSegment */,
 				E37DA0A22A60FE0500AC7BF4 /* FUBeautyFilterView.h */,
 				E37DA0A32A60FE0500AC7BF4 /* FUMakeupView.h */,
 				E37DA0A42A60FE0500AC7BF4 /* FUStickerView.m */,
@@ -1144,7 +1159,6 @@
 				E37DA0B62A60FE0500AC7BF4 /* FUBeautyShapeView.m */,
 				E37DA0B72A60FE0500AC7BF4 /* FUTipHUD */,
 				E37DA0BA2A60FE0500AC7BF4 /* FUBodyView.m */,
-				E37DA0BB2A60FE0500AC7BF4 /* FUSegmentBar */,
 				E37DA0BE2A60FE0500AC7BF4 /* FUBeautySkinView.h */,
 				E37DA0BF2A60FE0500AC7BF4 /* FUSquareButton */,
 			);
@@ -1187,15 +1201,6 @@
 				E37DA0B92A60FE0500AC7BF4 /* FUTipHUD.m */,
 			);
 			path = FUTipHUD;
-			sourceTree = "<group>";
-		};
-		E37DA0BB2A60FE0500AC7BF4 /* FUSegmentBar */ = {
-			isa = PBXGroup;
-			children = (
-				E37DA0BC2A60FE0500AC7BF4 /* FUSegmentBar.h */,
-				E37DA0BD2A60FE0500AC7BF4 /* FUSegmentBar.m */,
-			);
-			path = FUSegmentBar;
 			sourceTree = "<group>";
 		};
 		E37DA0BF2A60FE0500AC7BF4 /* FUSquareButton */ = {
@@ -1574,6 +1579,7 @@
 				477ECA2326281211007AAC4F /* LiveAnchorViewController.m in Sources */,
 				47E073082636A6C80027D05E /* AVCamPreviewView.m in Sources */,
 				47E073272636A6C80027D05E /* LocalVideoShareViewController.m in Sources */,
+				E34024372AB7EF9E00F0A794 /* FUSegmentedControl.m in Sources */,
 				17A5C13F26CCF723007E91B1 /* ThirdBeautyBytedViewController.m in Sources */,
 				8821F2682626EB1C00F5852F /* AudioCallingViewController.m in Sources */,
 				47E0732B2636A6C80027D05E /* CustomFrameRender.m in Sources */,
@@ -1617,7 +1623,7 @@
 				EB147B20282E477900C0E2DC /* ThirdBeautyTencentEffectViewController.m in Sources */,
 				E37DA1032A60FE0600AC7BF4 /* FUBeautySkinModel.m in Sources */,
 				E37DA1062A60FE0600AC7BF4 /* FUStickerView.m in Sources */,
-				E37DA1112A60FE0600AC7BF4 /* FUSegmentBar.m in Sources */,
+				E34024362AB7EF9E00F0A794 /* FUSegmentBar.m in Sources */,
 				E37DA1082A60FE0600AC7BF4 /* FUAlertController.m in Sources */,
 				E37DA0FC2A60FE0600AC7BF4 /* FUBodyViewModel.m in Sources */,
 				477EC97F26268B0A007AAC4F /* AppDelegate.m in Sources */,

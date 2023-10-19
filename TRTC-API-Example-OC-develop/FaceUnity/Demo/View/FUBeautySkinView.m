@@ -9,6 +9,8 @@
 #import "FUSquareButton.h"
 #import "FUSlider.h"
 #import "FUAlertManager.h"
+#import "FUTipHUD.h"
+#import "FUSegmentedControl.h"
 
 static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
 
@@ -51,6 +53,7 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
     [self addSubview:effectView];
     
     [self addSubview:self.slider];
+    
     [self addSubview:self.recoverButton];
     NSLayoutConstraint *recoverLeadingConstraint = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:17];
     NSLayoutConstraint *recoverBottomConstraint = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:-6];
@@ -131,11 +134,45 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
     cell.imageName = skin.name;
     cell.defaultValue = skin.defaultValue;
     cell.currentValue = skin.currentValue;
+    if (skin.needsNPUSupport) {
+        // iPhoneXR 以下机型不支持
+        cell.disabled = [UIDevice currentDevice].fu_deviceModelType <  FUDeviceModelTypeiPhoneXR;
+    } else {
+        // 处理低性能手机禁用特效
+        if (skin.differentiateDevicePerformance) {
+            cell.disabled = self.viewModel.performanceLevel != FUDevicePerformanceLevelHigh;
+        } else {
+            cell.disabled = NO;
+        }
+    }
     cell.selected = indexPath.item == self.viewModel.selectedIndex;
     return cell;
 }
 
 #pragma mark - Collection view delegate
+
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    FUBeautySkinModel *skin = self.viewModel.beautySkins[indexPath.item];
+    if (skin.needsNPUSupport && [UIDevice currentDevice].fu_deviceModelType < FUDeviceModelTypeiPhoneXR) {
+        [FUTipHUD showTips:[NSString stringWithFormat:FULocalizedString(@"功能仅支持iPhoneXR及以上机型使用"), FULocalizedString(skin.name)] dismissWithDelay:1];
+        [self.skinCollectionView reloadData];
+        if (self.viewModel.selectedIndex >= 0) {
+            [self.skinCollectionView selectItemAtIndexPath:[NSIndexPath indexPathForItem:self.viewModel.selectedIndex inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+        }
+        return NO;
+    }
+    if (skin.differentiateDevicePerformance) {
+        if (self.viewModel.performanceLevel != FUDevicePerformanceLevelHigh) {
+            [FUTipHUD showTips:[NSString stringWithFormat:FULocalizedString(@"该功能只支持在高端机上使用"), FULocalizedString(skin.name)] dismissWithDelay:1];
+            [self.skinCollectionView reloadData];
+            if (self.viewModel.selectedIndex >= 0) {
+                [self.skinCollectionView selectItemAtIndexPath:[NSIndexPath indexPathForItem:self.viewModel.selectedIndex inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+            }
+            return NO;
+        }
+    }
+    return YES;
+}
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.item == self.viewModel.selectedIndex) {
@@ -220,22 +257,30 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
         
         [self.contentView addSubview:self.textLabel];
         NSLayoutConstraint *textTop = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeBottom multiplier:1 constant:7];
-        
-        NSLayoutConstraint *textCenterX = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-        [self.contentView addConstraints:@[textTop, textCenterX]];
+        NSLayoutConstraint *textLeading = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeading multiplier:1 constant:0];
+        NSLayoutConstraint *textTrailing = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0];
+        [self.contentView addConstraints:@[textTop, textLeading, textTrailing]];
     }
     return self;
 }
 
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
-    BOOL changed = self.currentValue > 0.01;;
-    if (selected) {
-        self.imageView.image = changed ? [UIImage imageNamed:[NSString stringWithFormat:@"%@-3", self.imageName]] : [UIImage imageNamed:[NSString stringWithFormat:@"%@-2", self.imageName]];
-        self.textLabel.textColor = [UIColor colorWithRed:94/255.f green:199/255.f blue:254/255.f alpha:1];
+    if (self.disabled) {
+        self.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@-0", self.imageName]];
+        self.imageView.alpha = 0.7;
+        self.textLabel.alpha = 0.7;
     } else {
-        self.imageView.image = changed ? [UIImage imageNamed:[NSString stringWithFormat:@"%@-1", self.imageName]] : [UIImage imageNamed:[NSString stringWithFormat:@"%@-0", self.imageName]];
-        self.textLabel.textColor = [UIColor whiteColor];
+        self.imageView.alpha = 1;
+        self.textLabel.alpha = 1;
+        BOOL changed = self.currentValue > 0.01;;
+        if (selected) {
+            self.imageView.image = changed ? [UIImage imageNamed:[NSString stringWithFormat:@"%@-3", self.imageName]] : [UIImage imageNamed:[NSString stringWithFormat:@"%@-2", self.imageName]];
+            self.textLabel.textColor = [UIColor colorWithRed:94/255.f green:199/255.f blue:254/255.f alpha:1];
+        } else {
+            self.imageView.image = changed ? [UIImage imageNamed:[NSString stringWithFormat:@"%@-1", self.imageName]] : [UIImage imageNamed:[NSString stringWithFormat:@"%@-0", self.imageName]];
+            self.textLabel.textColor = [UIColor whiteColor];
+        }
     }
 }
 
@@ -252,6 +297,8 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
         _textLabel = [[UILabel alloc] init];
         _textLabel.font = [UIFont systemFontOfSize:10];
         _textLabel.textColor = [UIColor whiteColor];
+        _textLabel.textAlignment = NSTextAlignmentCenter;
+        _textLabel.adjustsFontSizeToFitWidth = YES;
         _textLabel.translatesAutoresizingMaskIntoConstraints = NO;
     }
     return _textLabel;

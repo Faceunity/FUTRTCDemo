@@ -8,6 +8,16 @@
         "ratio":6
     },
     {
+        "name":"祛斑痘",
+        "type":9,
+        "currentValue":0.0,
+        "defaultValue":0.0,
+        "defaultValueInMiddle":false,
+        "ratio":1,
+        "differentiateDevicePerformance":true,
+        "needsNPUSupport":true
+    },
+    {
         "name":"美白",
         "type":1,
         "currentValue":0.3,
@@ -20,6 +30,14 @@
         "type":2,
         "currentValue":0.3,
         "defaultValue":0.3,
+        "defaultValueInMiddle":false,
+        "ratio":1
+    },
+    {
+        "name":"清晰",
+        "type":10,
+        "currentValue":0.0,
+        "defaultValue":0.0,
         "defaultValueInMiddle":false,
         "ratio":1
     },
