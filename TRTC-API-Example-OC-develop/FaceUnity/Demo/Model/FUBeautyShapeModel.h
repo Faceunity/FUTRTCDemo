@@ -21,8 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) double defaultValue;
 /// 默认值是否中位数
 @property (nonatomic, assign) BOOL defaultValueInMiddle;
-/// 是否区分设备性能
-@property (nonatomic, assign) BOOL differentiateDevicePerformance;
+/// 设备性能等级要求
+@property (nonatomic, assign) FUDevicePerformanceLevel performanceLevel;
 
 @end
 

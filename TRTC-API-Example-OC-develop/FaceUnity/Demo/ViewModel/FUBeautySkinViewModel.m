@@ -20,6 +20,8 @@
     self = [super init];
     if (self) {
         self.beautySkins = [self defaultSkins];
+        // 默认不开启皮肤分割
+        _skinSegmentationEnabled = NO;
         _selectedIndex = -1;
         self.performanceLevel = [FURenderKit devicePerformanceLevel];
         
@@ -43,6 +45,7 @@
     for (FUBeautySkinModel *skin in self.beautySkins) {
         [self setValue:skin.currentValue forType:skin.type];
     }
+    self.skinSegmentationEnabled = _skinSegmentationEnabled;
 }
 
 - (void)recoverAllSkinValuesToDefault {
@@ -50,6 +53,12 @@
         skin.currentValue = skin.defaultValue;
         [self setValue:skin.currentValue forType:skin.type];
     }
+    self.skinSegmentationEnabled = NO;
+}
+
+- (void)setSkinSegmentationEnabled:(BOOL)skinSegmentationEnabled {
+    _skinSegmentationEnabled = skinSegmentationEnabled;
+    [FURenderKit shareRenderKit].beauty.enableSkinSegmentation = skinSegmentationEnabled;
 }
 
 #pragma mark - Private methods
@@ -95,6 +104,10 @@
 #pragma mark - Getters
 
 - (BOOL)isDefaultValue {
+    if (self.skinSegmentationEnabled) {
+        // 开启了皮肤美白
+        return NO;
+    }
     for (FUBeautySkinModel *skin in self.beautySkins) {
         int currentIntValue = skin.defaultValueInMiddle ? (int)(skin.currentValue / skin.ratio * 100 - 50) : (int)(skin.currentValue / skin.ratio * 100);
         int defaultIntValue = skin.defaultValueInMiddle ? (int)(skin.defaultValue / skin.ratio * 100 - 50) : (int)(skin.defaultValue / skin.ratio * 100);

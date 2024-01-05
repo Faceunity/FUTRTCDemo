@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSArray<FUBeautySkinModel *> *beautySkins;
 /// 是否所有值都是默认
 @property (nonatomic, assign, readonly) BOOL isDefaultValue;
+/// 皮肤分割开关，默认为NO
+@property (nonatomic, assign) BOOL skinSegmentationEnabled;
 /// 当前选中索引，默认为-1
 @property (nonatomic, assign) NSInteger selectedIndex;
 /// 需要根据高低端机适配
