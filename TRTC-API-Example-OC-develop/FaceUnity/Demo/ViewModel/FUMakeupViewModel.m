@@ -41,7 +41,7 @@
     if (![FURenderKit shareRenderKit].makeup) {
         FUMakeup *makeup = [[FUMakeup alloc] initWithPath:path name:@"makeup"];
         // 高端机打开全脸分割
-        makeup.makeupSegmentation = [FURenderKit devicePerformanceLevel] == FUDevicePerformanceLevelHigh;
+        makeup.makeupSegmentation = [FURenderKit devicePerformanceLevel] >= FUDevicePerformanceLevelHigh;
         [FURenderKit shareRenderKit].makeup = makeup;
     }
     FUMakeupModel *model = self.combinationMakeups[index];
