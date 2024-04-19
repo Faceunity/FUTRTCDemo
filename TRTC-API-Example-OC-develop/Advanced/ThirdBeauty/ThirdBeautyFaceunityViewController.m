@@ -229,9 +229,8 @@ static const NSInteger RemoteUserMaxNum = 6;
         [[FUTestRecorder shareRecorder] processFrameWithLog];
         [FUDemoManager updateBeautyBlurEffect];
         FURenderInput *input = [[FURenderInput alloc] init];
-        input.renderConfig.gravityEnable = YES;
-        // 根据输入纹理调整参数设置
         input.renderConfig.imageOrientation = FUImageOrientationDown;
+        input.renderConfig.gravityEnable = YES;
         input.renderConfig.isFromFrontCamera = YES;
         input.renderConfig.isFromMirroredCamera = YES;
         input.renderConfig.textureTransform = CCROT0_FLIPVERTICAL;
@@ -269,9 +268,6 @@ static const NSInteger RemoteUserMaxNum = 6;
     encParams.videoBitrate = 1200;
     encParams.videoFps = 30;
     [self.trtcCloud setVideoEncoderParam:encParams];
-//
-//    _mContext = [EAGLContext currentContext];
-//    [[FUGLContext shareGLContext] setCustomGLContext:_mContext];
 }
 
 - (void)stopPushStream {
@@ -301,7 +297,6 @@ static const NSInteger RemoteUserMaxNum = 6;
     [self.trtcCloud stopLocalPreview];
     [self.trtcCloud stopLocalAudio];
     [self.trtcCloud exitRoom];
-//    [[FUManager shareManager] destoryItems];
     [TRTCCloud destroySharedIntance];
 }
 
