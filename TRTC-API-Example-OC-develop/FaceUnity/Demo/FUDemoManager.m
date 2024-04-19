@@ -77,6 +77,17 @@ static dispatch_once_t onceToken;
     // 初始化 FURenderKit
     [FURenderKit setupWithSetupConfig:setupConfig];
     
+    FUDevicePerformanceLevel level = [FURenderKit devicePerformanceLevel];
+    FUFaceAlgorithmConfig config = FUFaceAlgorithmConfigEnableAll;
+    if (level < FUDevicePerformanceLevelHigh) {
+        // 关闭所有效果
+        config = FUFaceAlgorithmConfigDisableAll;
+    } else if (level < FUDevicePerformanceLevelVeryHigh) {
+        config = FUFaceAlgorithmConfigDisableSkinSegAndDelSpot;
+    } else if (level < FUDevicePerformanceLevelExcellent) {
+        config = FUFaceAlgorithmConfigDisableSkinSeg;
+    }
+    
     // 加载人脸 AI 模型
     NSString *faceAIPath = [[NSBundle mainBundle] pathForResource:@"ai_face_processor" ofType:@"bundle"];
     [FUAIKit loadAIModeWithAIType:FUAITYPE_FACEPROCESSOR dataPath:faceAIPath];
@@ -88,10 +99,10 @@ static dispatch_once_t onceToken;
     [FUAIKit shareKit].maxTrackFaces = 4;
     
     // 设置人脸算法质量
-    [FUAIKit shareKit].faceProcessorFaceLandmarkQuality = [FURenderKit devicePerformanceLevel] >= FUDevicePerformanceLevelHigh ? FUFaceProcessorFaceLandmarkQualityHigh : FUFaceProcessorFaceLandmarkQualityMedium;
+    [FUAIKit shareKit].faceProcessorFaceLandmarkQuality = level >= FUDevicePerformanceLevelHigh ? FUFaceProcessorFaceLandmarkQualityHigh : FUFaceProcessorFaceLandmarkQualityMedium;
     
     // 设置小脸检测是否打开
-    [FUAIKit shareKit].faceProcessorDetectSmallFace = [FURenderKit devicePerformanceLevel] >= FUDevicePerformanceLevelHigh;
+    [FUAIKit shareKit].faceProcessorDetectSmallFace = level >= FUDevicePerformanceLevelHigh;
     
     // 性能测试初始化
     [[FUTestRecorder shareRecorder] setupRecord];
