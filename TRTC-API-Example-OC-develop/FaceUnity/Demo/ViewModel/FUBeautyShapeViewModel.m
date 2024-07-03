@@ -18,9 +18,9 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.performanceLevel = [FURenderKit devicePerformanceLevel];
         self.beautyShapes = [self defaultShapes];
         self.selectedIndex = -1;
-        self.performanceLevel = [FURenderKit devicePerformanceLevel];
         
         [self setAllShapeValues];
     }
@@ -137,7 +137,7 @@
 
 - (NSArray<FUBeautyShapeModel *> *)defaultShapes {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *shapePath = [bundle pathForResource:@"beauty_shape" ofType:@"json"];
+    NSString *shapePath = self.performanceLevel == FUDevicePerformanceLevelLow_1 ? [bundle pathForResource:@"beauty_shape_low" ofType:@"json"] : [bundle pathForResource:@"beauty_shape" ofType:@"json"];
     NSArray<NSDictionary *> *shapeData = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:shapePath] options:NSJSONReadingMutableContainers error:nil];
     NSMutableArray *shapes = [[NSMutableArray alloc] init];
     for (NSDictionary *dictionary in shapeData) {
@@ -147,7 +147,6 @@
     }
     return [shapes copy];
 }
-
 
 - (BOOL)isDefaultValue {
     for (FUBeautyShapeModel *shape in self.beautyShapes) {

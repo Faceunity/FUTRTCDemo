@@ -195,6 +195,8 @@
 		E37DA13B2A60FE0700AC7BF4 /* face_beautification.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E37DA0F72A60FE0600AC7BF4 /* face_beautification.bundle */; };
 		E37DA13C2A60FE1100AC7BF4 /* FURenderKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E37DA0E92A60FE0600AC7BF4 /* FURenderKit.framework */; };
 		E37DA13D2A60FE1200AC7BF4 /* FURenderKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E37DA0E92A60FE0600AC7BF4 /* FURenderKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E3AAD86E2C2BC146002B56D2 /* beauty_skin_low.json in Resources */ = {isa = PBXBuildFile; fileRef = E3AAD86C2C2BC145002B56D2 /* beauty_skin_low.json */; };
+		E3AAD86F2C2BC146002B56D2 /* beauty_shape_low.json in Resources */ = {isa = PBXBuildFile; fileRef = E3AAD86D2C2BC145002B56D2 /* beauty_shape_low.json */; };
 		EB147B20282E477900C0E2DC /* ThirdBeautyTencentEffectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB147B1F282E477900C0E2DC /* ThirdBeautyTencentEffectViewController.m */; };
 		EB147B22282E477E00C0E2DC /* ThirdBeautyTencentEffectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB147B21282E477E00C0E2DC /* ThirdBeautyTencentEffectViewController.xib */; };
 /* End PBXBuildFile section */
@@ -512,6 +514,8 @@
 		E37DA0F52A60FE0600AC7BF4 /* body_slim.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = body_slim.bundle; sourceTree = "<group>"; };
 		E37DA0F62A60FE0600AC7BF4 /* fuzzytoonfilter.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = fuzzytoonfilter.bundle; sourceTree = "<group>"; };
 		E37DA0F72A60FE0600AC7BF4 /* face_beautification.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = face_beautification.bundle; sourceTree = "<group>"; };
+		E3AAD86C2C2BC145002B56D2 /* beauty_skin_low.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = beauty_skin_low.json; sourceTree = "<group>"; };
+		E3AAD86D2C2BC145002B56D2 /* beauty_shape_low.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = beauty_shape_low.json; sourceTree = "<group>"; };
 		EB147B1E282E477200C0E2DC /* ThirdBeautyTencentEffectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThirdBeautyTencentEffectViewController.h; sourceTree = "<group>"; };
 		EB147B1F282E477900C0E2DC /* ThirdBeautyTencentEffectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdBeautyTencentEffectViewController.m; sourceTree = "<group>"; };
 		EB147B21282E477E00C0E2DC /* ThirdBeautyTencentEffectViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ThirdBeautyTencentEffectViewController.xib; sourceTree = "<group>"; };
@@ -1228,6 +1232,8 @@
 		E37DA0C42A60FE0600AC7BF4 /* 美颜 */ = {
 			isa = PBXGroup;
 			children = (
+				E3AAD86D2C2BC145002B56D2 /* beauty_shape_low.json */,
+				E3AAD86C2C2BC145002B56D2 /* beauty_skin_low.json */,
 				E37DA0C52A60FE0600AC7BF4 /* beauty_filter.json */,
 				E37DA0C62A60FE0600AC7BF4 /* beauty_shape.json */,
 				E37DA0C72A60FE0600AC7BF4 /* beauty_skin.json */,
@@ -1409,6 +1415,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3AAD86F2C2BC146002B56D2 /* beauty_shape_low.json in Resources */,
 				477EC97A26268B0A007AAC4F /* Assets.xcassets in Resources */,
 				47E073202636A6C80027D05E /* JoinMultipleRoomViewController.xib in Resources */,
 				E37DA1272A60FE0600AC7BF4 /* chuqiu.bundle in Resources */,
@@ -1467,6 +1474,7 @@
 				E37DA1292A60FE0600AC7BF4 /* xinggan.bundle in Resources */,
 				E37DA13A2A60FE0700AC7BF4 /* fuzzytoonfilter.bundle in Resources */,
 				E37DA11B2A60FE0600AC7BF4 /* tianmei.bundle in Resources */,
+				E3AAD86E2C2BC146002B56D2 /* beauty_skin_low.json in Resources */,
 				47E0725F263656110027D05E /* InfoPlist.strings in Resources */,
 				47E072F62636A6C80027D05E /* PushCDNSelectRoleViewController.xib in Resources */,
 				E37DA1352A60FE0700AC7BF4 /* tongue.bundle in Resources */,

@@ -175,7 +175,7 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
             if (self.viewModel.selectedIndex >= 0) {
                 [self.skinCollectionView selectItemAtIndexPath:[NSIndexPath indexPathForItem:self.viewModel.selectedIndex inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
             }
-        } else if (skin.performanceLevel == FUDevicePerformanceLevelHigh) {
+        } else if (skin.performanceLevel >= FUDevicePerformanceLevelLow) {
             [FUTipHUD showTips:[NSString stringWithFormat:FULocalizedString(@"该功能只支持在高端机上使用"), FULocalizedString(skin.name)] dismissWithDelay:1];
             [self.skinCollectionView reloadData];
             if (self.viewModel.selectedIndex >= 0) {

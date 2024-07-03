@@ -25,8 +25,8 @@
     self = [super init];
     if (self) {
         self.beautyFilters = [self defaultFilters];
-        // 默认索引为1
-        _selectedIndex = 1;
+        // 特殊机型默认关闭滤镜，高端机默认 1
+        _selectedIndex = [FURenderKit devicePerformanceLevel] == FUDevicePerformanceLevelLow_1 ? 0 : 1;
         [self setCurrentFilter];
     }
     return self;
