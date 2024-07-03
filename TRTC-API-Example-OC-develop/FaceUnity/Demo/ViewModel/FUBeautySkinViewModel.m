@@ -19,11 +19,11 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.performanceLevel = [FURenderKit devicePerformanceLevel];
         self.beautySkins = [self defaultSkins];
         // 默认不开启皮肤分割
         _skinSegmentationEnabled = NO;
         _selectedIndex = -1;
-        self.performanceLevel = [FURenderKit devicePerformanceLevel];
         
         [self setAllSkinValues];
     }
@@ -120,7 +120,7 @@
 
 - (NSArray<FUBeautySkinModel *> *)defaultSkins {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *skinPath = [bundle pathForResource:@"beauty_skin" ofType:@"json"];
+    NSString *skinPath = self.performanceLevel == FUDevicePerformanceLevelLow_1 ? [bundle pathForResource:@"beauty_skin_low" ofType:@"json"] : [bundle pathForResource:@"beauty_skin" ofType:@"json"];
     NSArray<NSDictionary *> *skinData = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:skinPath] options:NSJSONReadingMutableContainers error:nil];
     NSMutableArray *skins = [[NSMutableArray alloc] init];
     for (NSDictionary *dictionary in skinData) {

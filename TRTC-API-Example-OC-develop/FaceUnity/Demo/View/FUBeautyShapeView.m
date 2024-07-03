@@ -145,7 +145,7 @@ static NSString * const kFUBeautyShapeCellIdentifier = @"FUBeautyShapeCell";
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     FUBeautyShapeCell *cell = (FUBeautyShapeCell *)[collectionView cellForItemAtIndexPath:indexPath];
     FUBeautyShapeModel *shape = self.viewModel.beautyShapes[indexPath.item];
-    if (cell.disabled && shape.performanceLevel == FUDevicePerformanceLevelHigh) {
+    if (cell.disabled && shape.performanceLevel >= FUDevicePerformanceLevelLow) {
         [FUTipHUD showTips:[NSString stringWithFormat:FULocalizedString(@"该功能只支持在高端机上使用"), FULocalizedString(shape.name)] dismissWithDelay:1];
         [self.shapeCollectionView reloadData];
         if (self.viewModel.selectedIndex >= 0) {

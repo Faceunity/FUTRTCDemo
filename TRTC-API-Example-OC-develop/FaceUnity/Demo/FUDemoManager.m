@@ -16,6 +16,7 @@
 
 #import "FUSegmentBar.h"
 #import "FUAlertManager.h"
+#import "FUTipHUD.h"
 
 #import "authpack.h"
 
@@ -83,10 +84,11 @@ static dispatch_once_t onceToken;
         // 关闭所有效果
         config = FUFaceAlgorithmConfigDisableAll;
     } else if (level < FUDevicePerformanceLevelVeryHigh) {
-        config = FUFaceAlgorithmConfigDisableSkinSegAndDelSpot;
+        config = FUFaceAlgorithmConfigDisableSkinSegAndDelSpot| FUFaceAlgorithmConfigDisableARMeshV2;
     } else if (level < FUDevicePerformanceLevelExcellent) {
         config = FUFaceAlgorithmConfigDisableSkinSeg;
     }
+    [FUAIKit setFaceAlgorithmConfig:config];
     
     // 加载人脸 AI 模型
     NSString *faceAIPath = [[NSBundle mainBundle] pathForResource:@"ai_face_processor" ofType:@"bundle"];
@@ -103,6 +105,11 @@ static dispatch_once_t onceToken;
     
     // 设置小脸检测是否打开
     [FUAIKit shareKit].faceProcessorDetectSmallFace = level >= FUDevicePerformanceLevelHigh;
+    
+    if (level <= FUDevicePerformanceLevelLow) {
+        // 打开动态质量
+        [FURenderKit setDynamicQualityControlEnabled:YES];
+    }
     
     // 性能测试初始化
     [[FUTestRecorder shareRecorder] setupRecord];
@@ -228,6 +235,15 @@ static dispatch_once_t onceToken;
         self.renderSwitch.hidden = NO;
         self.showingView = needShowView;
     }
+}
+
+- (BOOL)segmentBar:(FUSegmentBar *)segmentBar shouldSelectItemAtIndex:(NSInteger)index {
+    if (index == FUModuleTypeMakeup && [FURenderKit devicePerformanceLevel] < FUDevicePerformanceLevelLow) {
+        // 限制美妆功能
+        [FUTipHUD showTips:[NSString stringWithFormat:FULocalizedString(@"该功能只支持在高端机上使用"), @"美妆"] dismissWithDelay:1];
+        return NO;
+    }
+    return YES;
 }
 
 #pragma mark - Getters
