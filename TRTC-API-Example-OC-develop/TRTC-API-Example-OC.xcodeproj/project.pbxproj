@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AD6EC852D3F3E4300635931 /* beauty_skin_lessThan2.json in Resources */ = {isa = PBXBuildFile; fileRef = 0AD6EC842D3F3E4300635931 /* beauty_skin_lessThan2.json */; };
 		17A5BD8626CBABBC007E91B1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 17A5BD8326CBABBC007E91B1 /* README.md */; };
 		17A5BE0726CBCC21007E91B1 /* TRTC-API-Example-OC-PrefixHeader.pch in Sources */ = {isa = PBXBuildFile; fileRef = 477EC9F12626F77E007AAC4F /* TRTC-API-Example-OC-PrefixHeader.pch */; };
 		17A5C13F26CCF723007E91B1 /* ThirdBeautyBytedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A5C13926CCF722007E91B1 /* ThirdBeautyBytedViewController.m */; };
@@ -237,6 +238,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0AD6EC842D3F3E4300635931 /* beauty_skin_lessThan2.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = beauty_skin_lessThan2.json; sourceTree = "<group>"; };
 		17A5BD8326CBABBC007E91B1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		17A5C13426CCF54A007E91B1 /* TXLiteAVSDK_TRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TXLiteAVSDK_TRTC.framework; path = ../SDK/TXLiteAVSDK_TRTC.framework; sourceTree = "<group>"; };
 		17A5C13626CCF556007E91B1 /* effect-sdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "effect-sdk.framework"; sourceTree = "<group>"; };
@@ -1237,6 +1239,7 @@
 				E37DA0C52A60FE0600AC7BF4 /* beauty_filter.json */,
 				E37DA0C62A60FE0600AC7BF4 /* beauty_shape.json */,
 				E37DA0C72A60FE0600AC7BF4 /* beauty_skin.json */,
+				0AD6EC842D3F3E4300635931 /* beauty_skin_lessThan2.json */,
 			);
 			path = "美颜";
 			sourceTree = "<group>";
@@ -1461,6 +1464,7 @@
 				8821F2642626EB1C00F5852F /* VideoCallingEnterViewController.xib in Resources */,
 				E37DA1392A60FE0700AC7BF4 /* body_slim.bundle in Resources */,
 				477EC9B626269568007AAC4F /* HomeTableViewCell.xib in Resources */,
+				0AD6EC852D3F3E4300635931 /* beauty_skin_lessThan2.json in Resources */,
 				E37DA1182A60FE0600AC7BF4 /* rose.bundle in Resources */,
 				17A5BD8626CBABBC007E91B1 /* README.md in Resources */,
 				477EC97C26268B0A007AAC4F /* LaunchScreen.storyboard in Resources */,
