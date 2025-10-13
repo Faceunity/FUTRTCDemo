@@ -224,6 +224,7 @@ static const NSInteger RemoteUserMaxNum = 6;
         EAGLContext *glContext = [FUGLContext shareGLContext].currentGLContext;
         if (glContext != _mContext) {
             [[FUGLContext shareGLContext] setCustomGLContext:_mContext];
+            [EAGLContext setCurrentContext:_mContext];
         }
         [[FUDemoManager shared] checkAITrackedResult];
         [[FUTestRecorder shareRecorder] processFrameWithLog];
