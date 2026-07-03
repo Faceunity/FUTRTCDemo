@@ -1,9 +1,8 @@
 //
 //  FUBeautyShapeViewModel.h
-//  FUDemo
+//  FUBeautyComponent
 //
-//  Created by 项林平 on 2021/6/11.
-//  美型功能模块
+//  Created by 项林平 on 2022/7/27.
 //
 
 #import <Foundation/Foundation.h>
@@ -22,9 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// 需要根据高低端机适配
 @property (nonatomic, assign) FUDevicePerformanceLevel performanceLevel;
 
+/// 保存美型数据到本地
+- (void)saveShapesPersistently;
+
 /// 设置单项美型值
 /// @param value 当前选中单项的值
 - (void)setShapeValue:(double)value;
+
+/// 设置当前所有美型值
+- (void)setAllShapeValues;
 
 /// 恢复所有美型值为默认
 - (void)recoverAllShapeValuesToDefault;

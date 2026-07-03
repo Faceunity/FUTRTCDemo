@@ -1,12 +1,13 @@
 //
 //  FUBodyViewModel.m
-//  FURTCDemo
+//  FULiveDemo
 //
-//  Created by 项林平 on 2023/2/7.
+//  Created by 项林平 on 2022/8/10.
 //
 
 #import "FUBodyViewModel.h"
 #import "FUBodyModel.h"
+#import <FURenderKit/FURenderKit.h>
 
 @interface FUBodyViewModel ()
 
@@ -21,11 +22,20 @@
     if (self) {
         self.bodies = [self defaultBodies];
         _selectedIndex = -1;
+        [self setAllBodyValues];
     }
     return self;
 }
 
+
 #pragma mark - Instance methods
+
+- (void)setAllBodyValues {
+    for (FUBodyModel *body in self.bodies) {
+        [self setValue:body.currentValue forType:body.type];
+    }
+}
+
 
 - (void)setBodyValue:(double)value {
     if (self.selectedIndex < 0 || self.selectedIndex >= self.bodies.count) {
@@ -36,37 +46,11 @@
     [self setValue:model.currentValue forType:model.type];
 }
 
-- (void)setAllBodyValues {
-    for (FUBodyModel *body in self.bodies) {
-        [self setValue:body.currentValue forType:body.type];
-    }
-}
-
 - (void)recoverAllBodyValuesToDefault {
-    for (FUBodyModel *body in self.bodies) {
-        body.currentValue = body.defaultValue;
-        [self setValue:body.currentValue forType:body.type];
+    for (FUBodyModel *bodyBeauty in self.bodies) {
+        bodyBeauty.currentValue = bodyBeauty.defaultValue;
+        [self setValue:bodyBeauty.currentValue forType:bodyBeauty.type];
     }
-}
-
-- (double)currentValueAtIndex:(NSUInteger)index {
-    return self.bodies[index].currentValue;
-}
-
-- (double)defaultValueAtIndex:(NSUInteger)index {
-    return self.bodies[index].defaultValue;
-}
-
-- (BOOL)defaultValueInMiddleAtIndex:(NSUInteger)index {
-    return self.bodies[index].defaultValueInMiddle;
-}
-
-- (NSString *)nameAtIndex:(NSUInteger)index {
-    return self.bodies[index].name;
-}
-
-- (UIImage *)iconAtIndex:(NSUInteger)index {
-    return [UIImage imageNamed:self.bodies[index].name];
 }
 
 #pragma mark - Private methods
@@ -75,40 +59,40 @@
     switch (type) {
         case FUBeautyBodyItemSlim:
             [FURenderKit shareRenderKit].bodyBeauty.bodySlimStrength = value;
+        
             break;
         case FUBeautyBodyItemLongLeg:
             [FURenderKit shareRenderKit].bodyBeauty.legSlimStrength = value;
+        
             break;
         case FUBeautyBodyItemThinWaist:
             [FURenderKit shareRenderKit].bodyBeauty.waistSlimStrength = value;
+        
             break;
         case FUBeautyBodyItemBeautyShoulder:
             [FURenderKit shareRenderKit].bodyBeauty.shoulderSlimStrength = value;
+        
             break;
         case FUBeautyBodyItemBeautyButtock:
             [FURenderKit shareRenderKit].bodyBeauty.hipSlimStrength = value;
+        
             break;
         case FUBeautyBodyItemSmallHead:
             [FURenderKit shareRenderKit].bodyBeauty.headSlim = value;
+        
             break;
         case FUBeautyBodyItemThinLeg:
             [FURenderKit shareRenderKit].bodyBeauty.legSlim = value;
+        
+            break;
+        case FUBeautyBodyItemBreast:
+            [[FURenderKit shareRenderKit].bodyBeauty setParam:@(value) forName:@"BreastStrength" paramType:FUParamTypeDouble];
+        
             break;
     }
 }
 
 #pragma mark - Getters
-
-- (BOOL)isDefaultValue {
-    for (FUBodyModel *body in self.bodies) {
-        int currentIntValue = body.defaultValueInMiddle ? (int)(body.currentValue * 100 - 50) : (int)(body.currentValue * 100);
-        int defaultIntValue = body.defaultValueInMiddle ? (int)(body.defaultValue * 100 - 50) : (int)(body.defaultValue * 100);
-        if (currentIntValue != defaultIntValue) {
-            return NO;
-        }
-    }
-    return YES;
-}
 
 - (NSArray<FUBodyModel *> *)defaultBodies {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
@@ -121,6 +105,18 @@
         [bodies addObject:model];
     }
     return [bodies copy];
+}
+
+
+- (BOOL)isDefaultValue {
+    for (FUBodyModel *bodyBeauty in self.bodies) {
+        int currentIntValue = bodyBeauty.defaultValueInMiddle ? (int)(bodyBeauty.currentValue * 100 - 50) : (int)(bodyBeauty.currentValue * 100);
+        int defaultIntValue = bodyBeauty.defaultValueInMiddle ? (int)(bodyBeauty.defaultValue * 100 - 50) : (int)(bodyBeauty.defaultValue * 100);
+        if (currentIntValue != defaultIntValue) {
+            return NO;
+        }
+    }
+    return YES;
 }
 
 @end

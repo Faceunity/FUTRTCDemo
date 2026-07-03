@@ -1,8 +1,8 @@
 //
 //  FUBodyModel.h
-//  FURTCDemo
+//  FULiveDemo
 //
-//  Created by 项林平 on 2023/2/7.
+//  Created by 项林平 on 2022/8/10.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,14 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FUBodyModel : NSObject
 
-@property (nonatomic, copy) NSString *name;
-/// 美体类型
 @property (nonatomic, assign) FUBeautyBodyItem type;
-/// 当前值
-@property (nonatomic, assign) double currentValue;
-/// 默认值
+@property (nonatomic, copy) NSString* name;
 @property (nonatomic, assign) double defaultValue;
-/// 默认值是否中位数
+@property (nonatomic, assign) double currentValue;
 @property (nonatomic, assign) BOOL defaultValueInMiddle;
 
 @end

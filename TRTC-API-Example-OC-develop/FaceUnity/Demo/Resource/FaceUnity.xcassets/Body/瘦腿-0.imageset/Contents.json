@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "demo_icon_thin_leg_nor.png",
+      "filename" : "demo_icon_stovepipe_nor.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "demo_icon_thin_leg_nor@2x.png",
+      "filename" : "demo_icon_stovepipe_nor@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "demo_icon_thin_leg_nor@3x.png",
+      "filename" : "demo_icon_stovepipe_nor@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

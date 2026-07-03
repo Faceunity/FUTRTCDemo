@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 是否允许选择
 @property (nonatomic, assign) BOOL disabled;
 
+@property (nonatomic, assign) BOOL defaultInMiddle;
+
 @property (nonatomic, assign) double currentValue;
 
 @property (nonatomic, assign) double defaultValue;

@@ -1,12 +1,12 @@
 //
 //  FUBeautySkinViewModel.m
-//  FUDemo
+//  FUBeautyComponent
 //
-//  Created by 项林平 on 2021/6/11.
+//  Created by 项林平 on 2022/7/27.
 //
 
 #import "FUBeautySkinViewModel.h"
-#import "FUBeautySkinModel.h"
+#import "FUDefines.h"
 
 @interface FUBeautySkinViewModel ()
 
@@ -16,21 +16,49 @@
 
 @implementation FUBeautySkinViewModel
 
+#pragma mark - Initializer
+
 - (instancetype)init {
     self = [super init];
     if (self) {
         self.performanceLevel = [FURenderKit devicePerformanceLevel];
-        self.beautySkins = [self defaultSkins];
-        // 默认不开启皮肤分割
-        _skinSegmentationEnabled = NO;
-        _selectedIndex = -1;
-        
-        [self setAllSkinValues];
+        NSArray<FUBeautySkinModel *> *defaultSkins = [self defaultSkins];
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:FUPersistentBeautySkinKey]) {
+            NSArray<FUBeautySkinModel *> *localSkins = [self localSkins];
+            self.beautySkins = [self mergedSkinsWithLocal:localSkins defaultSkins:defaultSkins];
+            if ([self skins:self.beautySkins needMigrationFromLocal:localSkins defaultSkins:defaultSkins]) {
+                [self saveSkinsPersistently];
+            }
+        } else {
+            self.beautySkins = defaultSkins;
+        }
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:FUPersistentBeautySkinSegmentationKey]) {
+            _skinSegmentationEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:FUPersistentBeautySkinSegmentationKey];
+        } else {
+            // 默认不开启皮肤分割
+            _skinSegmentationEnabled = NO;
+        }
+        self.selectedIndex = -1;
     }
+        [self setAllSkinValues];
     return self;
 }
 
 #pragma mark - Instance methods
+
+- (void)saveSkinsPersistently {
+    if (self.beautySkins.count == 0) {
+        return;
+    }
+    NSMutableArray *skins = [[NSMutableArray alloc] init];
+    for (FUBeautySkinModel *model in self.beautySkins) {
+        NSDictionary *dictionary = [model dictionaryWithValuesForKeys:@[@"name", @"type", @"currentValue", @"defaultValue", @"defaultValueInMiddle", @"ratio", @"performanceLevel"]];
+        [skins addObject:dictionary];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:skins forKey:FUPersistentBeautySkinKey];
+    [[NSUserDefaults standardUserDefaults] setBool:self.skinSegmentationEnabled forKey:FUPersistentBeautySkinSegmentationKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 - (void)setSkinValue:(double)value {
     if (self.selectedIndex < 0 || self.selectedIndex >= self.beautySkins.count) {
@@ -98,7 +126,76 @@
         case FUBeautySkinClarity:
             [FURenderKit shareRenderKit].beauty.clarity = value;
             break;
+        case FUBeautySkinBodyBlurLevel:
+            // body_blur_level: 0.0-6.0
+            [[FURenderKit shareRenderKit].beauty setParam:@(value) forName:@"body_blur_level" paramType:FUParamTypeDouble];
+            break;
+        case FUBeautySkinFacialPlump:
+            // facial_plump: 0.0-1.0
+            [[FURenderKit shareRenderKit].beauty setParam:@(value) forName:@"facial_plump" paramType:FUParamTypeDouble];
+            break;
     }
+}
+
+- (NSArray<FUBeautySkinModel *> *)mergedSkinsWithLocal:(NSArray<FUBeautySkinModel *> *)localSkins defaultSkins:(NSArray<FUBeautySkinModel *> *)defaultSkins {
+    NSMutableDictionary<NSNumber *, FUBeautySkinModel *> *localSkinsByType = [NSMutableDictionary dictionary];
+    for (FUBeautySkinModel *skin in localSkins) {
+        localSkinsByType[@(skin.type)] = skin;
+    }
+    NSMutableArray<FUBeautySkinModel *> *mergedSkins = [NSMutableArray arrayWithCapacity:defaultSkins.count];
+    for (FUBeautySkinModel *defaultSkin in defaultSkins) {
+        FUBeautySkinModel *localSkin = localSkinsByType[@(defaultSkin.type)];
+        if (localSkin) {
+            FUBeautySkinModel *mergedSkin = [[FUBeautySkinModel alloc] init];
+            mergedSkin.name = defaultSkin.name;
+            mergedSkin.type = defaultSkin.type;
+            mergedSkin.defaultValue = defaultSkin.defaultValue;
+            mergedSkin.defaultValueInMiddle = defaultSkin.defaultValueInMiddle;
+            mergedSkin.ratio = defaultSkin.ratio;
+            mergedSkin.performanceLevel = defaultSkin.performanceLevel;
+            mergedSkin.currentValue = localSkin.currentValue;
+            [mergedSkins addObject:mergedSkin];
+        } else {
+            [mergedSkins addObject:defaultSkin];
+        }
+    }
+    return [mergedSkins copy];
+}
+
+- (BOOL)skins:(NSArray<FUBeautySkinModel *> *)skins needMigrationFromLocal:(NSArray<FUBeautySkinModel *> *)localSkins defaultSkins:(NSArray<FUBeautySkinModel *> *)defaultSkins {
+    if (skins.count != defaultSkins.count || localSkins.count != defaultSkins.count) {
+        return YES;
+    }
+    for (NSUInteger index = 0; index < defaultSkins.count; index++) {
+        if (skins[index].type != defaultSkins[index].type) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (NSArray<FUBeautySkinModel *> *)localSkins {
+    NSArray *skins = [[NSUserDefaults standardUserDefaults] objectForKey:FUPersistentBeautySkinKey];
+    NSMutableArray *mutableSkins = [[NSMutableArray alloc] init];
+    for (NSDictionary *skin in skins) {
+        FUBeautySkinModel *model = [[FUBeautySkinModel alloc] init];
+        [model setValuesForKeysWithDictionary:skin];
+        [mutableSkins addObject:model];
+    }
+    return [mutableSkins copy];
+}
+
+- (NSArray<FUBeautySkinModel *> *)defaultSkins {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *skinPath = self.performanceLevel == FUDevicePerformanceLevelLow_1 ? [bundle pathForResource:@"beauty_skin_low" ofType:@"json"] : self.performanceLevel < FUDevicePerformanceLevelHigh ? [bundle pathForResource:@"beauty_skin_lessThan2" ofType:@"json"] : [bundle pathForResource:@"beauty_skin" ofType:@"json"];
+    NSArray<NSDictionary *> *skinData = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:skinPath] options:NSJSONReadingMutableContainers error:nil];
+    NSMutableArray *skins = [[NSMutableArray alloc] init];
+    for (NSDictionary *dictionary in skinData) {
+        FUBeautySkinModel *model = [[FUBeautySkinModel alloc] init];
+        [model setValuesForKeysWithDictionary:dictionary];
+        [skins addObject:model];
+    }
+    return [skins copy];
 }
 
 #pragma mark - Getters
@@ -116,19 +213,6 @@
         }
     }
     return YES;
-}
-
-- (NSArray<FUBeautySkinModel *> *)defaultSkins {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *skinPath = self.performanceLevel == FUDevicePerformanceLevelLow_1 ? [bundle pathForResource:@"beauty_skin_low" ofType:@"json"] : self.performanceLevel < FUDevicePerformanceLevelHigh ? [bundle pathForResource:@"beauty_skin_lessThan2" ofType:@"json"] : [bundle pathForResource:@"beauty_skin" ofType:@"json"];
-    NSArray<NSDictionary *> *skinData = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:skinPath] options:NSJSONReadingMutableContainers error:nil];
-    NSMutableArray *skins = [[NSMutableArray alloc] init];
-    for (NSDictionary *dictionary in skinData) {
-        FUBeautySkinModel *model = [[FUBeautySkinModel alloc] init];
-        [model setValuesForKeysWithDictionary:dictionary];
-        [skins addObject:model];
-    }
-    return [skins copy];
 }
 
 @end

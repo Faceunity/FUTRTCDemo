@@ -11,6 +11,10 @@
 #import "FUAlertManager.h"
 #import "FUTipHUD.h"
 #import "FUSegmentedControl.h"
+#import "FUDefines.h"
+#import <FURenderKit/UIDevice+FURenderKit.h>
+
+
 
 static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
 
@@ -154,9 +158,9 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
     FUBeautySkinModel *skin = self.viewModel.beautySkins[indexPath.item];
     cell.textLabel.text = FULocalizedString(skin.name);
     cell.imageName = skin.name;
+    cell.defaultInMiddle = skin.defaultValueInMiddle;
     cell.defaultValue = skin.defaultValue;
     cell.currentValue = skin.currentValue;
-    // 判断特效设备性能等级要求是否高于当前设备性能等级
     FUDevicePerformanceLevel level = [FURenderKit devicePerformanceLevel];
     cell.disabled = skin.performanceLevel > level;
     cell.selected = indexPath.item == self.viewModel.selectedIndex;
@@ -169,18 +173,16 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
     FUBeautySkinCell *cell = (FUBeautySkinCell *)[collectionView cellForItemAtIndexPath:indexPath];
     if (cell.disabled) {
         FUBeautySkinModel *skin = self.viewModel.beautySkins[indexPath.item];
-        if (skin.performanceLevel == FUDevicePerformanceLevelVeryHigh) {
+        if (skin.performanceLevel == FUDevicePerformanceLevelExcellent) {
+            [FUTipHUD showTips:[NSString stringWithFormat:FULocalizedString(@"功能仅支持iPhone11及以上机型使用"), FULocalizedString(skin.name)] dismissWithDelay:1];
+        } else if (skin.performanceLevel == FUDevicePerformanceLevelVeryHigh) {
             [FUTipHUD showTips:[NSString stringWithFormat:FULocalizedString(@"功能仅支持iPhoneXR及以上机型使用"), FULocalizedString(skin.name)] dismissWithDelay:1];
-            [self.skinCollectionView reloadData];
-            if (self.viewModel.selectedIndex >= 0) {
-                [self.skinCollectionView selectItemAtIndexPath:[NSIndexPath indexPathForItem:self.viewModel.selectedIndex inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
-            }
         } else if (skin.performanceLevel >= FUDevicePerformanceLevelLow) {
             [FUTipHUD showTips:[NSString stringWithFormat:FULocalizedString(@"该功能只支持在高端机上使用"), FULocalizedString(skin.name)] dismissWithDelay:1];
-            [self.skinCollectionView reloadData];
-            if (self.viewModel.selectedIndex >= 0) {
-                [self.skinCollectionView selectItemAtIndexPath:[NSIndexPath indexPathForItem:self.viewModel.selectedIndex inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
-            }
+        }
+        [self.skinCollectionView reloadData];
+        if (self.viewModel.selectedIndex >= 0) {
+            [self.skinCollectionView selectItemAtIndexPath:[NSIndexPath indexPathForItem:self.viewModel.selectedIndex inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
         }
         return NO;
     }
@@ -195,11 +197,11 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
     FUBeautySkinModel *skin = self.viewModel.beautySkins[indexPath.item];
     if (skin.type == FUBeautySkinColorLevel) {
         // 美白需要加入皮肤分割功能
-        self.slider.frame = CGRectMake(112, 16, CGRectGetWidth(self.frame) - 128, 30);
+        self.slider.frame = CGRectMake(112, 16, CGRectGetWidth(self.frame) - 128, FUFunctionSliderHeight);
         self.segmentedControl.hidden = NO;
     } else {
         self.segmentedControl.hidden = YES;
-        self.slider.frame = CGRectMake(56, 16, CGRectGetWidth(self.frame) - 116, 30);
+        self.slider.frame = CGRectMake(56, 16, CGRectGetWidth(self.frame) - 116, FUFunctionSliderHeight);
     }
     if (self.slider.hidden) {
         self.slider.hidden = NO;
@@ -310,7 +312,12 @@ static NSString * const kFUBeautySkinCellIdentifier = @"FUBeautySkinCell";
     } else {
         self.imageView.alpha = 1;
         self.textLabel.alpha = 1;
-        BOOL changed = self.currentValue > 0.01;;
+        BOOL changed = NO;
+        if (self.defaultInMiddle) {
+            changed = fabs(self.currentValue - 0.5) > 0.01;
+        }else{
+            changed = self.currentValue > 0.01;
+        }
         if (selected) {
             self.imageView.image = changed ? [UIImage imageNamed:[NSString stringWithFormat:@"%@-3", self.imageName]] : [UIImage imageNamed:[NSString stringWithFormat:@"%@-2", self.imageName]];
             self.textLabel.textColor = [UIColor colorWithRed:94/255.f green:199/255.f blue:254/255.f alpha:1];

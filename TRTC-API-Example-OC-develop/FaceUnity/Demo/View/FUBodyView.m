@@ -1,11 +1,10 @@
 //
 //  FUBodyView.m
-//  FURTCDemo
-//
-//  Created by 项林平 on 2023/2/7.
+//  FaceUnity third-party demo (synced from FULiveDemo BodyBeauty)
 //
 
 #import "FUBodyView.h"
+#import "FUBodyModel.h"
 #import "FUSquareButton.h"
 #import "FUSlider.h"
 #import "FUAlertManager.h"
@@ -46,40 +45,24 @@ static NSString * const kFUBodyCellIdentifier = @"FUBodyCell";
 #pragma mark - UI
 
 - (void)configureUI {
-    UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
     effectView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
     [self addSubview:effectView];
     
     [self addSubview:self.slider];
     [self addSubview:self.recoverButton];
-    NSLayoutConstraint *recoverLeadingConstraint = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:17];
-    NSLayoutConstraint *recoverBottomConstraint = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:-6];
-    NSLayoutConstraint *recoverWidthConstraint = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44];
-    NSLayoutConstraint *recoverHeightConstraint = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:74];
-    
-    [self addConstraints:@[recoverLeadingConstraint, recoverBottomConstraint]];
-    [self.recoverButton addConstraints:@[recoverWidthConstraint, recoverHeightConstraint]];
+        NSLayoutConstraint *constraint1 = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:17.0];    [self addConstraint:constraint1];    NSLayoutConstraint *constraint2 = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:55.0];    [self addConstraint:constraint2];    NSLayoutConstraint *constraint3 = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44.0];    [self.recoverButton addConstraint:constraint3];    NSLayoutConstraint *constraint4 = [NSLayoutConstraint constraintWithItem:self.recoverButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:74.0];    [self.recoverButton addConstraint:constraint4];
     
     // 分割线
     UIView *verticalLine = [[UIView alloc] init];
-    verticalLine.backgroundColor = [UIColor colorWithRed:229/255.f green:229/255.f blue:229/255.f alpha:0.2];
     verticalLine.translatesAutoresizingMaskIntoConstraints = NO;
+    verticalLine.backgroundColor = [UIColor colorWithRed:229/255.f green:229/255.f blue:229/255.f alpha:0.2];
     [self addSubview:verticalLine];
-    NSLayoutConstraint *lineLeadingConstraint = [NSLayoutConstraint constraintWithItem:verticalLine attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.recoverButton attribute:NSLayoutAttributeTrailing multiplier:1 constant:14];
-    NSLayoutConstraint *lineCenterYConstraint = [NSLayoutConstraint constraintWithItem:verticalLine attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.recoverButton attribute:NSLayoutAttributeCenterY multiplier:1 constant:-15];
-    NSLayoutConstraint *lineWidthConstraint = [NSLayoutConstraint constraintWithItem:verticalLine attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:1];
-    NSLayoutConstraint *lineHeightConstraint = [NSLayoutConstraint constraintWithItem:verticalLine attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:24];
-    [self addConstraints:@[lineLeadingConstraint, lineCenterYConstraint]];
-    [verticalLine addConstraints:@[lineWidthConstraint, lineHeightConstraint]];
+        NSLayoutConstraint *constraint5 = [NSLayoutConstraint constraintWithItem:verticalLine attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.recoverButton attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:14.0];    [self addConstraint:constraint5];    NSLayoutConstraint *constraint6 = [NSLayoutConstraint constraintWithItem:verticalLine attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.recoverButton attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:-15.0];    [self addConstraint:constraint6];    NSLayoutConstraint *constraint7 = [NSLayoutConstraint constraintWithItem:verticalLine attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:1.0];    [verticalLine addConstraint:constraint7];    NSLayoutConstraint *constraint8 = [NSLayoutConstraint constraintWithItem:verticalLine attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:24.0];    [verticalLine addConstraint:constraint8];
     
     [self addSubview:self.collectionView];
-    NSLayoutConstraint *collectionLeadingConstraint = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:76];
-    NSLayoutConstraint *collectionTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1 constant:0];
-    NSLayoutConstraint *collectionBottomConstraint = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0];
-    NSLayoutConstraint *collectionHeightConstraint = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:98];
-    [self addConstraints:@[collectionLeadingConstraint, collectionTrailingConstraint, collectionBottomConstraint]];
-    [self.collectionView addConstraint:collectionHeightConstraint];
+        NSLayoutConstraint *constraint9 = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:76.0];    [self addConstraint:constraint9];    NSLayoutConstraint *constraint10 = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];    [self addConstraint:constraint10];    NSLayoutConstraint *constraint11 = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:43.0];    [self addConstraint:constraint11];    NSLayoutConstraint *constraint12 = [NSLayoutConstraint constraintWithItem:self.collectionView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:98.0];    [self.collectionView addConstraint:constraint12];
 }
 
 - (void)refreshSubviews {
@@ -92,8 +75,8 @@ static NSString * const kFUBodyCellIdentifier = @"FUBodyCell";
             self.recoverButton.userInteractionEnabled = YES;
         }
         if (!self.slider.hidden && self.viewModel.selectedIndex >= 0) {
-            self.slider.bidirection = [self.viewModel defaultValueInMiddleAtIndex:self.viewModel.selectedIndex];
-            self.slider.value = [self.viewModel currentValueAtIndex:self.viewModel.selectedIndex];
+            self.slider.bidirection = self.viewModel.bodies[self.viewModel.selectedIndex].defaultValueInMiddle;
+            self.slider.value = self.viewModel.bodies[self.viewModel.selectedIndex].currentValue;
         }
         [self.collectionView reloadData];
         if (self.viewModel.selectedIndex >= 0) {
@@ -127,11 +110,11 @@ static NSString * const kFUBodyCellIdentifier = @"FUBodyCell";
 
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     FUBodyCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kFUBodyCellIdentifier forIndexPath:indexPath];
-    cell.textLabel.text = FULocalizedString([self.viewModel nameAtIndex:indexPath.item]);
-    cell.imageName = [self.viewModel nameAtIndex:indexPath.item];
-    cell.defaultValue = [self.viewModel defaultValueAtIndex:indexPath.item];
-    cell.currentValue = [self.viewModel currentValueAtIndex:indexPath.item];
-    cell.defaultInMiddle = [self.viewModel defaultValueInMiddleAtIndex:indexPath.item];
+    FUBodyModel *model = self.viewModel.bodies[indexPath.item];
+    cell.textLabel.text = FULocalizedString(model.name);
+    cell.imageName = model.name;
+    cell.defaultInMiddle = model.defaultValueInMiddle;
+    cell.currentValue = model.currentValue;
     cell.selected = indexPath.item == self.viewModel.selectedIndex;
     return cell;
 }
@@ -143,11 +126,12 @@ static NSString * const kFUBodyCellIdentifier = @"FUBodyCell";
         return;
     }
     self.viewModel.selectedIndex = indexPath.item;
+    FUBodyModel *bodyBeauty = self.viewModel.bodies[indexPath.item];
     if (self.slider.hidden) {
         self.slider.hidden = NO;
     }
-    self.slider.bidirection = [self.viewModel defaultValueInMiddleAtIndex:indexPath.item];
-    self.slider.value = [self.viewModel currentValueAtIndex:indexPath.item];
+    self.slider.bidirection = bodyBeauty.defaultValueInMiddle;
+    self.slider.value = bodyBeauty.currentValue;
 }
 
 #pragma mark - Getters
@@ -159,7 +143,7 @@ static NSString * const kFUBodyCellIdentifier = @"FUBodyCell";
         layout.itemSize = CGSizeMake(44, 74);
         layout.minimumLineSpacing = 22;
         layout.minimumInteritemSpacing = 22;
-        layout.sectionInset = UIEdgeInsetsMake(16, 16, 6, 16);
+        layout.sectionInset = UIEdgeInsetsMake(6, 16, 6, 16);
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
         _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
         _collectionView.backgroundColor = [UIColor clearColor];
@@ -220,9 +204,9 @@ static NSString * const kFUBodyCellIdentifier = @"FUBodyCell";
         
         [self.contentView addSubview:self.textLabel];
         NSLayoutConstraint *textTop = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.imageView attribute:NSLayoutAttributeBottom multiplier:1 constant:7];
-        NSLayoutConstraint *textLeading = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeading multiplier:1 constant:0];
-        NSLayoutConstraint *textTrailing = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0];
-        [self.contentView addConstraints:@[textTop, textLeading, textTrailing]];
+        
+        NSLayoutConstraint *textCenterX = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
+        [self.contentView addConstraints:@[textTop, textCenterX]];
     }
     return self;
 }
@@ -257,8 +241,6 @@ static NSString * const kFUBodyCellIdentifier = @"FUBodyCell";
         _textLabel = [[UILabel alloc] init];
         _textLabel.font = [UIFont systemFontOfSize:10];
         _textLabel.textColor = [UIColor whiteColor];
-        _textLabel.textAlignment = NSTextAlignmentCenter;
-        _textLabel.adjustsFontSizeToFitWidth = YES;
         _textLabel.translatesAutoresizingMaskIntoConstraints = NO;
     }
     return _textLabel;

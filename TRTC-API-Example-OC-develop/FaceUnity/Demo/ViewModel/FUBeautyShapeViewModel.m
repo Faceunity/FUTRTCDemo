@@ -1,11 +1,14 @@
 //
 //  FUBeautyShapeViewModel.m
-//  FUDemo
+//  FUBeautyComponent
 //
-//  Created by 项林平 on 2021/6/11.
+//  Created by 项林平 on 2022/7/27.
 //
 
 #import "FUBeautyShapeViewModel.h"
+#import "FUDefines.h"
+
+#import <FURenderKit/FURenderKit.h>
 
 @interface FUBeautyShapeViewModel ()
 
@@ -15,19 +18,42 @@
 
 @implementation FUBeautyShapeViewModel
 
+#pragma mark - Initializer
+
 - (instancetype)init {
     self = [super init];
     if (self) {
         self.performanceLevel = [FURenderKit devicePerformanceLevel];
-        self.beautyShapes = [self defaultShapes];
+        NSArray<FUBeautyShapeModel *> *defaultShapes = [self defaultShapes];
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:FUPersistentBeautyShapeKey]) {
+            NSArray<FUBeautyShapeModel *> *localShapes = [self localShapes];
+            self.beautyShapes = [self mergedShapesWithLocal:localShapes defaultShapes:defaultShapes];
+            if ([self shapes:self.beautyShapes needMigrationFromLocal:localShapes defaultShapes:defaultShapes]) {
+                [self saveShapesPersistently];
+            }
+        } else {
+            self.beautyShapes = defaultShapes;
+        }
         self.selectedIndex = -1;
-        
-        [self setAllShapeValues];
     }
+        [self setAllShapeValues];
     return self;
 }
 
 #pragma mark - Instance methods
+
+- (void)saveShapesPersistently {
+    if (self.beautyShapes.count == 0) {
+        return;
+    }
+    NSMutableArray *shapes = [[NSMutableArray alloc] init];
+    for (FUBeautyShapeModel *model in self.beautyShapes) {
+        NSDictionary *dictionary = [model dictionaryWithValuesForKeys:@[@"name", @"type", @"currentValue", @"defaultValue", @"defaultValueInMiddle", @"performanceLevel"]];
+        [shapes addObject:dictionary];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:shapes forKey:FUPersistentBeautyShapeKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 - (void)setShapeValue:(double)value {
     if (self.selectedIndex < 0 || self.selectedIndex >= self.beautyShapes.count) {
@@ -130,10 +156,59 @@
         case FUBeautyShapeBrowThick:
             [FURenderKit shareRenderKit].beauty.intensityBrowThick = value;
             break;
+        case FUBeautyShapeEyePupil:
+            // intensity_eye_pupil: 0.0-1.0，0.5 为默认
+            [[FURenderKit shareRenderKit].beauty setParam:@(value) forName:@"intensity_eye_pupil" paramType:FUParamTypeDouble];
+            break;
     }
 }
 
-#pragma mark - Getters
+- (NSArray<FUBeautyShapeModel *> *)mergedShapesWithLocal:(NSArray<FUBeautyShapeModel *> *)localShapes defaultShapes:(NSArray<FUBeautyShapeModel *> *)defaultShapes {
+    NSMutableDictionary<NSNumber *, FUBeautyShapeModel *> *localShapesByType = [NSMutableDictionary dictionary];
+    for (FUBeautyShapeModel *shape in localShapes) {
+        localShapesByType[@(shape.type)] = shape;
+    }
+    NSMutableArray<FUBeautyShapeModel *> *mergedShapes = [NSMutableArray arrayWithCapacity:defaultShapes.count];
+    for (FUBeautyShapeModel *defaultShape in defaultShapes) {
+        FUBeautyShapeModel *localShape = localShapesByType[@(defaultShape.type)];
+        if (localShape) {
+            FUBeautyShapeModel *mergedShape = [[FUBeautyShapeModel alloc] init];
+            mergedShape.name = defaultShape.name;
+            mergedShape.type = defaultShape.type;
+            mergedShape.defaultValue = defaultShape.defaultValue;
+            mergedShape.defaultValueInMiddle = defaultShape.defaultValueInMiddle;
+            mergedShape.performanceLevel = defaultShape.performanceLevel;
+            mergedShape.currentValue = localShape.currentValue;
+            [mergedShapes addObject:mergedShape];
+        } else {
+            [mergedShapes addObject:defaultShape];
+        }
+    }
+    return [mergedShapes copy];
+}
+
+- (BOOL)shapes:(NSArray<FUBeautyShapeModel *> *)shapes needMigrationFromLocal:(NSArray<FUBeautyShapeModel *> *)localShapes defaultShapes:(NSArray<FUBeautyShapeModel *> *)defaultShapes {
+    if (shapes.count != defaultShapes.count || localShapes.count != defaultShapes.count) {
+        return YES;
+    }
+    for (NSUInteger index = 0; index < defaultShapes.count; index++) {
+        if (shapes[index].type != defaultShapes[index].type) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (NSArray<FUBeautyShapeModel *> *)localShapes {
+    NSArray *shapes = [[NSUserDefaults standardUserDefaults] objectForKey:FUPersistentBeautyShapeKey];
+    NSMutableArray *mutableShapes = [[NSMutableArray alloc] init];
+    for (NSDictionary *shape in shapes) {
+        FUBeautyShapeModel *model = [[FUBeautyShapeModel alloc] init];
+        [model setValuesForKeysWithDictionary:shape];
+        [mutableShapes addObject:model];
+    }
+    return [mutableShapes copy];
+}
 
 - (NSArray<FUBeautyShapeModel *> *)defaultShapes {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
@@ -147,6 +222,8 @@
     }
     return [shapes copy];
 }
+
+#pragma mark - Getters
 
 - (BOOL)isDefaultValue {
     for (FUBeautyShapeModel *shape in self.beautyShapes) {

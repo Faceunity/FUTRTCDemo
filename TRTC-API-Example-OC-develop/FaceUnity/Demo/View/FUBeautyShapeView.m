@@ -10,6 +10,9 @@
 #import "FUSlider.h"
 #import "FUAlertManager.h"
 #import "FUTipHUD.h"
+#import "FUDefines.h"
+
+
 
 static NSString * const kFUBeautyShapeCellIdentifier = @"FUBeautyShapeCell";
 
@@ -262,7 +265,7 @@ static NSString * const kFUBeautyShapeCellIdentifier = @"FUBeautyShapeCell";
             changed = self.currentValue > 0.01;
         }
         if (selected) {
-            self.imageView.image = changed ? [UIImage imageNamed:[NSString stringWithFormat:@"%@-3", self.imageName]] : [UIImage imageNamed:[NSString stringWithFormat:@"%@-2", self.imageName]];
+            self.imageView.image = changed ? [UIImage imageNamed:[NSString stringWithFormat:@"%@-3", self.imageName]] :  [UIImage imageNamed:[NSString stringWithFormat:@"%@-2", self.imageName]];
             self.textLabel.textColor = [UIColor colorWithRed:94/255.f green:199/255.f blue:254/255.f alpha:1];
         } else {
             self.imageView.image = changed ? [UIImage imageNamed:[NSString stringWithFormat:@"%@-1", self.imageName]] : [UIImage imageNamed:[NSString stringWithFormat:@"%@-0", self.imageName]];
@@ -292,4 +295,3 @@ static NSString * const kFUBeautyShapeCellIdentifier = @"FUBeautyShapeCell";
 }
 
 @end
-

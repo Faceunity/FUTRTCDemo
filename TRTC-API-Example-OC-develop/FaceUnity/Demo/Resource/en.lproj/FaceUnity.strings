@@ -63,33 +63,33 @@
 "眉毛粗细" = "Brow Thickness";
 
 /// Makeup
-"减龄"  = "Tender";
-"暖冬"  = "Warm";
-"红枫"  = "Maple";
+"减龄" = "Tender";
+"暖冬" = "Warm";
+"红枫" = "Maple";
 "Rose" = "Rose";
-"少女"  = "Girl";
-"紫韵"  = "Purple Rhyme";
-"厌世猫"  = "Ennui Cat";
-"人鱼"  = "Mermaid";
-"初秋"  = "Early Autumn";
-"千纸鹤"  = "Paper Crane";
-"超模"  = "Supermodel";
-"雏菊"  = "Daisy";
-"港风"  = "Hong Kong Style";
-"性感" =  "Sexy";
-"甜美" =  "Sweet";
-"邻家" =  "Girl Most Likely";
-"欧美" =  "Western";
-"妩媚" =  "Charming";
+"少女" = "Girl";
+"紫韵" = "Purple Rhyme";
+"厌世猫" = "Ennui Cat";
+"人鱼" = "Mermaid";
+"初秋" = "Early Autumn";
+"千纸鹤" = "Paper Crane";
+"超模" = "Supermodel";
+"雏菊" = "Daisy";
+"港风" = "Hong Kong Style";
+"性感" = "Sexy";
+"甜美" = "Sweet";
+"邻家" = "Girl Most Likely";
+"欧美" = "Western";
+"妩媚" = "Charming";
 
 /// Body
-"瘦身" = "Slim";
-"长腿" = "Long leg";
-"细腰" = "Thin waist";
-"美肩" = "Shoulder";
-"美臀" = "Buttock";
+"瘦身" = "Body Slim";
+"长腿" = "Legs Length";
+"细腰" = "Waist";
+"美肩" = "Shoulders";
+"美臀" = "Hips";
 "小头" = "Head";
-"瘦腿" = "Thin leg";
+"瘦腿" = "Legs Width";
 
 /// Filter
 "origin" = "Origin";
@@ -97,7 +97,7 @@
 "zhiganhui1" = "Texture grey1";
 "bailiang1" = "Bright1";
 "fennen1" = "Pink1";
-"lengsediao1"= "Cold tone1";
+"lengsediao1" = "Cold tone1";
 
 "卸妆" = "Remove";
 "恢复" = "Recover";
@@ -108,3 +108,11 @@
 "功能仅支持iPhoneXR及以上机型使用" = "%@ is only supported on iPhoneXR and above models";
 "功能仅支持iPhone11及以上机型使用" = "%@ is only supported on iPhone11 and above models";
 "是否将所有参数恢复到默认值" = "Whether to restore all parameters to default values";
+
+/// --- synced from FULiveDemo (skin/shape/body) ---
+"shape" = "Face Shaping";
+"skin" = "Beauty Effects";
+"丰胸" = "Breast";
+"全身磨皮" = "Full Body Buffing";
+"瞳孔大小" = "Pupil Size";
+"面部丰盈" = "Facial Plump";

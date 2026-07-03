@@ -1,8 +1,6 @@
 //
 //  FUBodyView.h
-//  FURTCDemo
-//
-//  Created by 项林平 on 2023/2/7.
+//  FaceUnity third-party demo (synced from FULiveDemo BodyBeauty)
 //
 
 #import <UIKit/UIKit.h>
@@ -22,13 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) UILabel *textLabel;
 
+@property (nonatomic, assign) BOOL defaultInMiddle;
+
 @property (nonatomic, assign) double currentValue;
 
-@property (nonatomic, assign) double defaultValue;
-
 @property (nonatomic, copy) NSString *imageName;
-
-@property (nonatomic, assign) BOOL defaultInMiddle;
 
 @end
 
