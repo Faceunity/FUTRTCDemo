@@ -116,3 +116,10 @@
 "全身磨皮" = "Full Body Buffing";
 "瞳孔大小" = "Pupil Size";
 "面部丰盈" = "Facial Plump";
+
+/// --- synced from FULiveDemo (skin/shape/body) ---
+"嘴巴宽度" = "Mouth Width";
+"外眼角" = "Outer Eye Corner";
+"天鹅颈" = "天鹅颈";
+"面部提拉" = "Face Lift";
+"鼻翼" = "Nose Alar";

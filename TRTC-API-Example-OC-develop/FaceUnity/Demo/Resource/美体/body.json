@@ -18,6 +18,12 @@
         "defaultValue": 0
     },
     {
+        "name": "天鹅颈",
+        "type": 8,
+        "currentValue": 0,
+        "defaultValue": 0
+    },
+    {
         "name": "美肩",
         "type": 3,
         "currentValue": 0.5,

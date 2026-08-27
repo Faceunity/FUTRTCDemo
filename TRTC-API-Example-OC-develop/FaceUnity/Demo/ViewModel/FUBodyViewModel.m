@@ -89,6 +89,10 @@
             [[FURenderKit shareRenderKit].bodyBeauty setParam:@(value) forName:@"BreastStrength" paramType:FUParamTypeDouble];
         
             break;
+        case FUBeautyBodyItemSwanNeck:
+            [[FURenderKit shareRenderKit].bodyBeauty setParam:@(value) forName:@"SwanNeckStrength" paramType:FUParamTypeDouble];
+        
+            break;
     }
 }
 
